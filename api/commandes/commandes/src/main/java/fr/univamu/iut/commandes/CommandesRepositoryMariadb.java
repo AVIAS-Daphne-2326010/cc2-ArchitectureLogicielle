@@ -1,14 +1,18 @@
 package fr.univamu.iut.commandes;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+
 import java.io.Closeable;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+@ApplicationScoped
 public class CommandesRepositoryMariadb implements CommandesRepositoryInterface, Closeable {
     protected Connection dbConnection;
 
-    public CommandesRepositoryMariadb(String infConnection, String user, String pwd) throws java.sql.SQLException, java.lang.ClassNotFoundException {
+    public @Inject CommandesRepositoryMariadb(String infConnection, String user, String pwd) throws java.sql.SQLException, java.lang.ClassNotFoundException {
         Class.forName("org.mariadb.jdbc.Driver");
         dbConnection = DriverManager.getConnection(infConnection, user, pwd);
     }
@@ -68,32 +72,5 @@ public class CommandesRepositoryMariadb implements CommandesRepositoryInterface,
             throw new RuntimeException(e);
         }
         return listCommandes;
-    }
-
-    @Override
-    public boolean updateCommande(int id_commande, String user_name, String relai, LocalDate date){
-        String query = "UPDATE Commandes SET user_name=?, relai=?, date=? WHERE id_commande=?";
-        int nbRowModified = 0;
-
-        try (PreparedStatement ps = dbConnection.prepareStatement(query)){
-            ps.setString(1, user_name);
-            ps.setString(2, relai);
-            ps.setString(3, String.valueOf(date));
-
-            nbRowModified = ps.executeUpdate();
-        } catch (SQLException e){
-            throw new RuntimeException(e);
-        }
-        return (nbRowModified != 0);
-    }
-
-    @Override
-    public void ajouterCommande(Commandes commande) {
-
-    }
-
-    @Override
-    public void supprimerCommande(int id_commande) {
-
     }
 }
