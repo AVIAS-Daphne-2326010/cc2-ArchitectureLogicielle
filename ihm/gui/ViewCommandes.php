@@ -11,6 +11,6 @@ class ViewCommandes extends View
 
         $this->title = 'Commandes';
 
-        $this->content = $presenter->getAllEmploiHTML();
+        $this->content = $presenter->getAllCommandesHTML();
     }
 }

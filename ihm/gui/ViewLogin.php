@@ -21,8 +21,6 @@ class ViewLogin extends View
         
                 <input type="submit" value="Envoyer">
             </form>
-            
-            <a href="/index.php/create">Création d\'un nouveau compte</a>
             ';
     }
 }

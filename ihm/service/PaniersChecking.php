@@ -3,20 +3,20 @@
 namespace service;
 class PaniersChecking
 {
-    protected $annoncesTxt;
+    protected $paniersTxt;
 
     public function getPaniersTxt()
     {
-        return $this->annoncesTxt;
+        return $this->paniersTxt;
     }
 
-    public function getAllPaniers($data)
+    public function getAllPaniers($api)
     {
-        $annonces = $data->getAllAnnonces();
+        $annonces = $api->getAllPaniers();
 
-        $this->annoncesTxt = array();
+        $this->paniersTxt = array();
         foreach ($annonces as $post) {
-            $this->annoncesTxt[] = ['id' => $post->getId(), 'title' => $post->getTitle(), 'body' => $post->getBody(), 'date' => $post->getDate()];
+            $this->paniersTxt[] = ['id' => $post->getId(), 'title' => $post->getTitle(), 'body' => $post->getBody(), 'date' => $post->getDate()];
         }
     }
 }

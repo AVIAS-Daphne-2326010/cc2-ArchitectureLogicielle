@@ -3,33 +3,22 @@ namespace control;
 class Presenter
 {
     protected $annoncesCheck;
+    protected $paniersCheck;
 
-    public function __construct($annoncesCheck)
+    public function __construct($annoncesCheck, $paniersCheck)
     {
         $this->annoncesCheck = $annoncesCheck;
+        $this->paniersCheck = $paniersCheck;
     }
 
-
-    public function getAllEmploiHTML() {
+    public function getAllCommandesHTML() {
         $content = null;
         if ($this->annoncesCheck->getCommandesTxt() != null) {
-            $content = '<h1>List of Jobs</h1>';
+            $content = '<h1>Liste des commandes</h1>';
+            $content .= '<ul>';
             foreach ($this->annoncesCheck->getCommandesTxt() as $post) {
                 $content .= ' <li>';
-                $content .= '<a href="/index.php/offreEmploi?id=' . $post['id'] . '">' . $post['title'] . '</a>';
-                $content .= ' </li>';
-            }
-            $content .= '</ul>';
-        }
-        return $content;
-    }
-    public function getAllAlternanceHTML() {
-        $content = null;
-        if ($this->annoncesCheck->getCommandesTxt() != null) {
-            $content = '<h1>List of Companies</h1>';
-            foreach ($this->annoncesCheck->getCommandesTxt() as $post) {
-                $content .= ' <li>';
-                $content .= '<a href="/index.php/companyAlternance?id=' . $post['id'] . '">' . $post['title'] . '</a>';
+                $content .= '<p>' . $post['title'] . '</p>';
                 $content .= ' </li>';
             }
             $content .= '</ul>';
@@ -37,30 +26,17 @@ class Presenter
         return $content;
     }
 
-    public function getAllAnnoncesHTML()
-    {
+    public function getAllPaniersHTML() {
         $content = null;
-        if ($this->annoncesCheck->getCommandesTxt() != null) {
-            $content = '<h1>List of Posts</h1>  <ul>';
-            foreach ($this->annoncesCheck->getCommandesTxt() as $post) {
+        if ($this->paniersCheck->getPaniersTxt() != null) {
+            $content = '<h1>Liste des paniers</h1>';
+            $content .= '<ul>';
+            foreach ($this->paniersCheck->getPaniersTxt() as $post) {
                 $content .= ' <li>';
-                $content .= '<a href="/index.php/post?id=' . $post['id'] . '">' . $post['title'] . '</a>';
+                $content .= '<p>' . $post['title'] . '</p>';
                 $content .= ' </li>';
             }
             $content .= '</ul>';
-        }
-        return $content;
-    }
-
-    public function getCurrentPostHTML()
-    {
-        $content = null;
-        if ($this->annoncesCheck->getCommandesTxt() != null) {
-            $post = $this->annoncesCheck->getCommandesTxt()[0];
-
-            $content = '<h1>' . $post['title'] . '</h1>';
-            $content .= '<div class="date">' . $post['date'] . '</div>';
-            $content .= '<div class="body">' . $post['body'] . '</div>';
         }
         return $content;
     }

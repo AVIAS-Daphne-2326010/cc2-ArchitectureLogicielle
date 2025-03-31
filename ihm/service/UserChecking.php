@@ -4,9 +4,8 @@ namespace service;
 
 class UserChecking
 {
-    public function authenticate($login, $password, $data)
+    public function authenticate($login, $password, $api)
     {
-        return ($data->getUser($login, $password) != null);
+        return ($api->getUser($login, $password) != null);
     }
-
 }

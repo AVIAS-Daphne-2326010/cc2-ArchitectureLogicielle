@@ -3,7 +3,10 @@
 namespace data;
 
 use domain\Post;
+include_once "domain/Post.php";
+
 use service\CommandesAccessInterface;
+include_once "service/CommandesAccessInterface.php";
 
 class ApiCommandes implements CommandesAccessInterface
 {
@@ -83,41 +86,5 @@ class ApiCommandes implements CommandesAccessInterface
         }
 
         return $annonces;
-    }
-
-    public function getSingleCommande($id)
-    {
-        $token = $this->getToken() ;
-
-        $api_url = "https://api.francetravail.io/partenaire/offresdemploi/v2/offres/";
-
-        $curlConnection  = curl_init();
-        $params = array(
-            CURLOPT_URL =>  $api_url.$id,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER => array("Authorization: Bearer " . $token['access_token'] )
-        );
-        curl_setopt_array($curlConnection, $params);
-        $response = curl_exec($curlConnection);
-        curl_close($curlConnection);
-
-        if( !$response )
-            echo curl_error($curlConnection);
-
-        $response = json_decode( $response, true );
-
-        // récupération des informations et création du Post
-        $id = $response['id'];
-        $title = $response['intitule'];
-        $body = $response['description'];
-
-        if( isset($response['salaire']['libelle']) )
-            $body.='; '.$response['salaire']['libelle'];
-        if( isset($response['entreprise']['nom']) )
-            $body.='; '.$response['entreprise']['nom'];
-        if ( isset($response['contact']['coordonnees1']) )
-            $body.='; '.$response['contact']['coordonnees1'];
-
-        return  new Post($id, $title, $body, date("Y-m-d H:i:s") );
     }
 }

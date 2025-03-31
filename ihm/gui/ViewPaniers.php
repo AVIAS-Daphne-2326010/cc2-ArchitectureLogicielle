@@ -11,7 +11,6 @@ class ViewPaniers extends View
 
         $this->title = 'Paniers';
 
-        $this->content = '<h2>Bienvenue ' . $login . '</h2>';
-        $this->content .= $presenter->getAllEmploiHTML();
+        $this->content = $presenter->getAllPaniersHTML();
     }
 }
