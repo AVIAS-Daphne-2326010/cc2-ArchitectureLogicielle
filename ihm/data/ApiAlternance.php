@@ -2,15 +2,15 @@
 
 namespace data;
 
-use service\AnnonceAccessInterface;
-include_once "service/AnnonceAccessInterface.php";
+use service\CommandesAccessInterface;
+include_once "service/CommandesAccessInterface.php";
 
 use domain\Post;
 include_once "domain/Post.php";
 
-class ApiAlternance implements AnnonceAccessInterface
+class ApiAlternance implements CommandesAccessInterface
 {
-    public function getAllAnnonces(){
+    public function getAllCommandes(){
         $romes = urlencode('M1801,M1802,M1803,M1804,M1805,M1806,M1810');
 
         $latitudeAix = '43.529742';
@@ -66,7 +66,7 @@ class ApiAlternance implements AnnonceAccessInterface
         return $annonces;
     }
 
-    public function getPost($id){
+    public function getSingleCommande($id){
         $annoncesSerialized = file_get_contents('data/cache_alternance');
         $annonces = unserialize( $annoncesSerialized );
 

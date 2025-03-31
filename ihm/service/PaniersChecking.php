@@ -1,16 +1,16 @@
 <?php
 
 namespace service;
-class AnnoncesChecking
+class PaniersChecking
 {
     protected $annoncesTxt;
 
-    public function getAnnoncesTxt()
+    public function getPaniersTxt()
     {
         return $this->annoncesTxt;
     }
 
-      public function getAllAnnonces($data)
+    public function getAllPaniers($data)
     {
         $annonces = $data->getAllAnnonces();
 
@@ -18,12 +18,5 @@ class AnnoncesChecking
         foreach ($annonces as $post) {
             $this->annoncesTxt[] = ['id' => $post->getId(), 'title' => $post->getTitle(), 'body' => $post->getBody(), 'date' => $post->getDate()];
         }
-    }
-
-    public function getPost($id, $data)
-    {
-        $post = $data->getPost($id);
-
-        $this->annoncesTxt[] = array('id' => $post->getId(), 'title' => $post->getTitle(), 'body' => $post->getBody(), 'date' => $post->getDate());
     }
 }

@@ -50,11 +50,11 @@ class Controllers
 
     public function annoncesAction( $data, $annoncesCheck)
     {
-            $annoncesCheck->getAllAnnonces($data);
+            $annoncesCheck->getAllCommandes($data);
     }
 
     public function postAction($id, $data, $annoncesCheck)
     {
-        $annoncesCheck->getPost($id, $data);
+        $annoncesCheck->getSingleCommande($id, $data);
     }
 }

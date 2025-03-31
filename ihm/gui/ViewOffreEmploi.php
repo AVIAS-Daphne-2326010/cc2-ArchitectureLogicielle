@@ -10,7 +10,7 @@ class ViewOffreEmploi extends View
     {
         parent::__construct($layout, $login);
 
-        $this->title= 'Exemple Annonces Basic PHP: Entreprise';
+        $this->title= 'Entreprise';
 
         $this->content = $presenter->getCurrentPostHTML();
 

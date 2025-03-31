@@ -5,7 +5,7 @@ namespace data;
 use domain\Post;
 use service\CommandesAccessInterface;
 
-class ApiEmploi implements CommandesAccessInterface
+class ApiCommandes implements CommandesAccessInterface
 {
     function getToken(){
         $curl = curl_init();

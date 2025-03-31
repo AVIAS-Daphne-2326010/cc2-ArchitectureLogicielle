@@ -9,7 +9,7 @@ class ViewAnnoncesAlternance extends View
     {
         parent::__construct($layout, $login);
 
-        $this->title= 'Exemple Annonces Basic PHP: Alternance';
+        $this->title= 'Alternance';
 
         $this->content = $presenter->getAllAlternanceHTML();
     }

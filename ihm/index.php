@@ -1,52 +1,54 @@
 <?php
 
 // charge et initialise les bibliothèques globales
-include_once 'data/AnnonceSqlAccess.php';
 include_once 'data/UserSqlAccess.php';
 include_once 'data/ApiAlternance.php';
 include_once 'data/ApiEmploi.php';
+include_once 'data/ApiPaniers.php';
+include_once 'data/ApiCommandes.php';
 
 include_once 'control/Controllers.php';
 include_once 'control/Presenter.php';
 
-include_once 'service/AnnoncesChecking.php';
+include_once 'service/CommandesChecking.php';
+include_once 'service/PaniersChecking.php';
 include_once 'service/UserChecking.php';
 include_once 'service/UserCreation.php';
 
 include_once 'gui/Layout.php';
 include_once 'gui/ViewLogin.php';
-include_once 'gui/ViewAnnonces.php';
 include_once 'gui/ViewAnnoncesAlternance.php';
 include_once 'gui/ViewCompanyAlternance.php';
-include_once 'gui/ViewAnnoncesEmploi.php';
 include_once 'gui/ViewOffreEmploi.php';
-include_once 'gui/ViewPost.php';
+include_once 'gui/ViewPaniers.php';
+include_once 'gui/ViewCommandes.php';
 include_once 'gui/ViewError.php';
 include_once 'gui/ViewCreate.php';
 
-use gui\{ViewAnnoncesEmploi,
+use gui\{
     ViewLogin,
-    ViewAnnonces,
     ViewAnnoncesAlternance,
     ViewCompanyAlternance,
     ViewOffreEmploi,
-    ViewPost,
     ViewError,
     ViewCreate,
+    ViewPaniers,
+    ViewCommandes,
     Layout};
 use control\{Controllers, Presenter};
-use data\{AnnonceSqlAccess, ApiAlternance, ApiEmploi, UserSqlAccess};
-use service\{AnnoncesChecking, UserChecking, UserCreation};
+use data\{ApiAlternance, ApiEmploi, ApiCommandes, UserSqlAccess, ApiPaniers};
+use service\{CommandesChecking, PaniersChecking, UserChecking, UserCreation};
 
 $data = null;
 try {
     $bd = new PDO('mysql:host=mysql-islem.alwaysdata.net;dbname=islem_annonces_db', 'islem_annonces', 'bJK8jHyz4FRphJ');
     // construction du modèle
-    $dataAnnonces = new AnnonceSqlAccess($bd);
     $dataUsers = new UserSqlAccess($bd);
     // ajout de l'api alternance
     $apiAlternance = new ApiAlternance();
     $apiEmploi = new ApiEmploi();
+    $apiPanier = new ApiPaniers();
+    $apiCommande = new ApiCommandes();
 
 } catch (PDOException $e) {
     print "Erreur de connexion !: " . $e->getMessage() . "<br/>";
@@ -56,8 +58,8 @@ try {
 // initialisation du controller
 $controller = new Controllers();
 
-// intialisation du cas d'utilisation service\AnnoncesChecking
-$annoncesCheck = new AnnoncesChecking() ;
+// intialisation du cas d'utilisation service\CommandesChecking
+$annoncesCheck = new CommandesChecking() ;
 
 // intialisation du cas d'utilisation service\UserChecking
 $userCheck = new UserChecking() ;
@@ -112,16 +114,6 @@ elseif ( '/index.php/create' == $uri ) {
 
     $vueCreate->display();
 }
-elseif ( '/index.php/annonces' == $uri ){
-    // affichage de toutes les annonces
-
-    $controller->annoncesAction($dataAnnonces, $annoncesCheck);
-
-    $layout = new Layout("gui/layoutLogged.html" );
-    $vueAnnonces= new ViewAnnonces( $layout,  $_SESSION['login'], $presenter);
-
-    $vueAnnonces->display();
-}
 elseif ( '/index.php/annoncesAlternance' == $uri ){
     // Affichage de toutes les entreprises offrant de l'alternance
 
@@ -143,18 +135,7 @@ elseif ( '/index.php/companyAlternance' == $uri
 
     $vuePostAlternance->display();
 }
-elseif ( '/index.php/annoncesEmploi' == $uri ){
-    // Affichage de toutes les offres d'emploi dans les systèmes d'information et de communication
-
-    $controller->annoncesAction($apiEmploi, $annoncesCheck);
-
-    $layout = new Layout("gui/layoutLogged.html" );
-    $vueAnnoncesAlternance= new ViewAnnoncesEmploi( $layout,  $_SESSION['login'], $presenter);
-
-    $vueAnnoncesAlternance->display();
-}
-elseif ( '/index.php/offreEmploi' == $uri
-    && isset($_GET['id'])) {
+elseif ( '/index.php/offreEmploi' == $uri && isset($_GET['id'])) {
     // Affichage d'une entreprise offrant de l'alternance
 
     $controller->postAction($_GET['id'], $apiEmploi, $annoncesCheck);
@@ -164,16 +145,23 @@ elseif ( '/index.php/offreEmploi' == $uri
 
     $vuePostAlternance->display();
 }
-elseif ( '/index.php/post' == $uri
-            && isset($_GET['id'])) {
-    // Affichage d'une annonce
+elseif ('/index.php/paniers' == $uri) {
 
-    $controller->postAction($_GET['id'], $dataAnnonces, $annoncesCheck);
+    $controller->annoncesAction($apiPanier, $annoncesCheck);
 
     $layout = new Layout("gui/layoutLogged.html" );
-    $vuePost= new ViewPost( $layout,  $_SESSION['login'], $presenter );
+    $vuePaniers = new ViewPaniers( $layout,  $_SESSION['login'], $presenter);
 
-    $vuePost->display();
+    $vuePaniers->display();
+}
+elseif ('/index.php/commandes' == $uri) {
+
+    $controller->annoncesAction($apiCommande, $annoncesCheck);
+
+    $layout = new Layout("gui/layoutLogged.html" );
+    $vueCommandes = new ViewCommandes( $layout,  $_SESSION['login'], $presenter);
+
+    $vueCommandes->display();
 }
 elseif ( '/index.php/error' == $uri ){
     // Affichage d'un message d'erreur

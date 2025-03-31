@@ -9,10 +9,10 @@ class ViewCreate extends View
     {
         parent::__construct($layout);
 
-        $this->title = 'Exemple Annonces Basic PHP: Création du compte';
+        $this->title = 'Création du compte';
 
         $this->content = '
-            <form method="post" action="/index.php/annonces">
+            <form method="post" action="/index.php/paniers">
                 <label for="login"> Votre identifiant </label> :
                 <input type="text" name="login" id="login" placeholder="defaut" maxlength="12" required />
                 <br />

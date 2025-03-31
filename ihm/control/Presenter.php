@@ -12,9 +12,9 @@ class Presenter
 
     public function getAllEmploiHTML() {
         $content = null;
-        if ($this->annoncesCheck->getAnnoncesTxt() != null) {
+        if ($this->annoncesCheck->getCommandesTxt() != null) {
             $content = '<h1>List of Jobs</h1>';
-            foreach ($this->annoncesCheck->getAnnoncesTxt() as $post) {
+            foreach ($this->annoncesCheck->getCommandesTxt() as $post) {
                 $content .= ' <li>';
                 $content .= '<a href="/index.php/offreEmploi?id=' . $post['id'] . '">' . $post['title'] . '</a>';
                 $content .= ' </li>';
@@ -25,9 +25,9 @@ class Presenter
     }
     public function getAllAlternanceHTML() {
         $content = null;
-        if ($this->annoncesCheck->getAnnoncesTxt() != null) {
+        if ($this->annoncesCheck->getCommandesTxt() != null) {
             $content = '<h1>List of Companies</h1>';
-            foreach ($this->annoncesCheck->getAnnoncesTxt() as $post) {
+            foreach ($this->annoncesCheck->getCommandesTxt() as $post) {
                 $content .= ' <li>';
                 $content .= '<a href="/index.php/companyAlternance?id=' . $post['id'] . '">' . $post['title'] . '</a>';
                 $content .= ' </li>';
@@ -40,9 +40,9 @@ class Presenter
     public function getAllAnnoncesHTML()
     {
         $content = null;
-        if ($this->annoncesCheck->getAnnoncesTxt() != null) {
+        if ($this->annoncesCheck->getCommandesTxt() != null) {
             $content = '<h1>List of Posts</h1>  <ul>';
-            foreach ($this->annoncesCheck->getAnnoncesTxt() as $post) {
+            foreach ($this->annoncesCheck->getCommandesTxt() as $post) {
                 $content .= ' <li>';
                 $content .= '<a href="/index.php/post?id=' . $post['id'] . '">' . $post['title'] . '</a>';
                 $content .= ' </li>';
@@ -55,8 +55,8 @@ class Presenter
     public function getCurrentPostHTML()
     {
         $content = null;
-        if ($this->annoncesCheck->getAnnoncesTxt() != null) {
-            $post = $this->annoncesCheck->getAnnoncesTxt()[0];
+        if ($this->annoncesCheck->getCommandesTxt() != null) {
+            $post = $this->annoncesCheck->getCommandesTxt()[0];
 
             $content = '<h1>' . $post['title'] . '</h1>';
             $content .= '<div class="date">' . $post['date'] . '</div>';
