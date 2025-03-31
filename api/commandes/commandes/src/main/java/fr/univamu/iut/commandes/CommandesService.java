@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 @ApplicationScoped
 public class CommandesService {
-
+    @Inject
     private CommandesRepositoryInterface commandesRepo;
 
     @Inject
@@ -26,7 +26,6 @@ public class CommandesService {
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
-
         return result;
     }
 

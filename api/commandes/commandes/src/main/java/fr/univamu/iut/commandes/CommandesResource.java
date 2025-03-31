@@ -8,11 +8,13 @@ import jakarta.ws.rs.core.Response;
 @Path("/commandes")
 @ApplicationScoped
 public class CommandesResource {
+    @Inject
     private CommandesService service;
 
     public CommandesResource() {}
 
-    public @Inject CommandesResource(CommandesRepositoryInterface commandesRepo) {
+    @Inject
+    public CommandesResource(CommandesRepositoryInterface commandesRepo) {
         this.service = new CommandesService(commandesRepo);
     }
 

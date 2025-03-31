@@ -12,7 +12,8 @@ import java.util.ArrayList;
 public class CommandesRepositoryMariadb implements CommandesRepositoryInterface, Closeable {
     protected Connection dbConnection;
 
-    public @Inject CommandesRepositoryMariadb(String infConnection, String user, String pwd) throws java.sql.SQLException, java.lang.ClassNotFoundException {
+    @Inject
+    public CommandesRepositoryMariadb(String infConnection, String user, String pwd) throws java.sql.SQLException, java.lang.ClassNotFoundException {
         Class.forName("org.mariadb.jdbc.Driver");
         dbConnection = DriverManager.getConnection(infConnection, user, pwd);
     }
