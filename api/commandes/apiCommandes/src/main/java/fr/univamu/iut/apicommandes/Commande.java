@@ -18,6 +18,7 @@ public class Commande {
          this.date = date;
      }
 
+    // Getters et Setters
      public int getId() {
          return id;
      }
