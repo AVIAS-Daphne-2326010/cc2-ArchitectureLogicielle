@@ -41,6 +41,14 @@ public class CommandeService {
         return result;
     }
 
+    public boolean createCommande(Commande commande) {
+        return commandeRepo.createCommande(commande);
+    }
+
+    public boolean deleteCommande(int id) {
+        return commandeRepo.deleteCommande(id);
+    }
+
     public boolean updateCommande(int id, Commande commande){
         return commandeRepo.updateCommande(id, commande.user_name, commande.relai, commande.date);
     }

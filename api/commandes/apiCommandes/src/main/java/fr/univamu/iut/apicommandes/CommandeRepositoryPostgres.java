@@ -40,6 +40,9 @@ public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
                 Date date = result.getDate("date");
 
                 selectedCommande = new Commande(id_commande, login, relai, date);
+
+                ArrayList<CompoCommande> paniers = getCompoCommandes(id_commande);
+                selectedCommande.setPaniers(paniers);
             }
 
         } catch (SQLException e){
@@ -66,6 +69,9 @@ public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
 
                 Commande currentCommande = new Commande(id, login, relai, date);
 
+                ArrayList<CompoCommande> paniers = getCompoCommandes(id);
+                currentCommande.setPaniers(paniers);
+
                 listCommandes.add(currentCommande);
             }
 
@@ -73,6 +79,34 @@ public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
             throw new RuntimeException(e);
         }
         return listCommandes;
+    }
+
+    @Override
+    public boolean createCommande(Commande commande) {
+        String query = "INSERT INTO Commande (login, relai, date) VALUES (?, ?, ?)";
+        try (PreparedStatement ps = dbConnection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, commande.getUser_name());
+            ps.setString(2, commande.getRelai());
+            ps.setDate(3, new java.sql.Date(commande.getDate().getTime()));
+
+            int nbRowInserted = ps.executeUpdate();
+            return nbRowInserted > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Échec de la création de la commande", e);
+        }
+    }
+
+    @Override
+    public boolean deleteCommande(int id) {
+        // Option 1 : Suppression en cascade (si les FK le permettent)
+        String query = "DELETE FROM Commande WHERE id_commande = ?";
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setInt(1, id);
+            int nbRowDeleted = ps.executeUpdate();
+            return nbRowDeleted > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Échec de la suppression de la commande", e);
+        }
     }
 
     @Override

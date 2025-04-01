@@ -30,6 +30,24 @@ public class CommandeRessource {
         return result;
     }
 
+    @POST
+    @Consumes("application/json")
+    public Response createCommande(Commande commande) {
+        if (!service.createCommande(commande)) {
+            throw new NotAcceptableException();
+        }
+        return Response.status(201).entity("created").build();
+    }
+
+    @DELETE
+    @Path("{id}")
+    public Response deleteCommande(@PathParam("id") int id) {
+        if (!service.deleteCommande(id)) {
+            throw new NotFoundException();
+        }
+        return Response.ok("deleted").build();
+    }
+
     @PUT
     @Path("{id}")
     @Consumes("application/json")

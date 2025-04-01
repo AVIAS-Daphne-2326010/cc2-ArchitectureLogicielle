@@ -1,14 +1,18 @@
 package fr.univamu.iut.apicommandes;
 
+import java.sql.Array;
 import java.sql.Date;
+import java.util.ArrayList;
 
 public class Commande {
      protected int id;
      protected String user_name;
      protected String relai;
      protected Date date;
+     protected ArrayList<CompoCommande> paniers;
 
-     public Commande(){
+     public Commande() {
+         this.paniers = new ArrayList<>();
      }
 
      public Commande(int id, String user_name, String relai, Date date) {
@@ -16,9 +20,22 @@ public class Commande {
          this.user_name = user_name;
          this.relai = relai;
          this.date = date;
+         this.paniers = new ArrayList<>();
      }
 
-    // Getters et Setters
+     // Getters et Setters
+     public ArrayList<CompoCommande> getPaniers() {
+         return paniers;
+     }
+
+     public void setPaniers(ArrayList<CompoCommande> paniers) {
+         this.paniers = paniers;
+     }
+
+     public void addPanier(CompoCommande panier) {
+         this.paniers.add(panier);
+     }
+
      public int getId() {
          return id;
      }
@@ -51,13 +68,14 @@ public class Commande {
          this.date = date;
      }
 
-     @Override
-     public String toString() {
-         return "Commande{" +
-                 "id='" + id + '\'' +
-                 ", user_name='" + user_name + '\'' +
-                 ", relai='" + relai + '\'' +
-                 ", date=" + date +
-                 '}';
-     }
+    @Override
+    public String toString() {
+        return "Commande{" +
+                "id=" + id +
+                ", user_name='" + user_name + '\'' +
+                ", relai='" + relai + '\'' +
+                ", date=" + date +
+                ", paniers=" + paniers +
+                '}';
+    }
 }
