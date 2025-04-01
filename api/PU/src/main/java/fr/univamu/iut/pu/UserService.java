@@ -1,4 +1,4 @@
-package fr.univamu.iut.user;
+package fr.univamu.iut.pu;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -31,8 +31,8 @@ public class UserService {
         return result;
     }
 
-    public String getUserJSON(int id) {
-        User myUser = userRepo.getUser(id);
+    public String getUserJSON(String login) {
+        User myUser = userRepo.getUser(login);
 
         if (myUser != null) {
 

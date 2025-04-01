@@ -1,4 +1,4 @@
-package fr.univamu.iut.user;
+package fr.univamu.iut.pu;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -12,7 +12,8 @@ public class UserResource {
 
     private UserService userService;
 
-    public UserResource() {}
+    public UserResource() {
+    }
 
     @Inject
     public UserResource(UserService userService) {
@@ -20,14 +21,15 @@ public class UserResource {
     }
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces("application/json")
     public String getAllUsers() {
+
         return userService.getAllUsersJSON();
     }
 
     @GET
     @Path("/{login}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces("application/json")
     public String getUserById(@PathParam("login") String login) {
         String result = userService.getUserJSON(login);
 

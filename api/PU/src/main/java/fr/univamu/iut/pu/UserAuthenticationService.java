@@ -1,4 +1,4 @@
-package fr.univamu.iut.user;
+package fr.univamu.iut.pu;
 
 public class UserAuthenticationService {
 
@@ -15,9 +15,6 @@ public class UserAuthenticationService {
         if( currentUser == null )
             return false;
 
-        if( ! currentUser.getPwd().equals(pwd) )
-            return false;
-
-        return true;
+        return currentUser.getPassword().equals(password);
     }
 }

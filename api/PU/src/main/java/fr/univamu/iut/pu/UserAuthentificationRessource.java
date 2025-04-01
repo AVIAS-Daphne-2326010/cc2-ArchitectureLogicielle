@@ -16,13 +16,13 @@ import java.util.Base64;
  */
 @Path("/authenticate")
 @ApplicationScoped
-public class UserAuthenticationResource {
+public class UserAuthentificationRessource {
 
     private UserAuthenticationService auth;
 
-    public UserAuthenticationResource(){}
+    public UserAuthentificationRessource(){}
 
-    public @Inject UserAuthenticationResource( UserRepositoryInterface userRepo ){
+    public @Inject UserAuthentificationRessource( UserRepositoryInterface userRepo ){
         this.auth = new UserAuthenticationService( userRepo ) ;
     }
 

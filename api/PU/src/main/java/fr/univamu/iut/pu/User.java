@@ -1,4 +1,6 @@
-package fr.univamu.iut.user;
+package fr.univamu.iut.pu;
+
+import java.util.Date;
 
 public class User {
     private String login;
@@ -7,15 +9,15 @@ public class User {
     private String lastName;
     private Date date;
 
-    public User(String login, String password, String firstName, String lastName, Date date) {
+    public User(String login, String firstName, String lastName, java.sql.Date date, String password) {
         this.login = login;
-        this.mail = mail;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.date = date;
         this.password = password;
     }
 
-    public int getLogin() {
+    public String getLogin() {
         return login;
     }
 
@@ -47,12 +49,12 @@ public class User {
         this.lastName = lastName;
     }
 
-    public String getMail() {
-        return mail;
+    public Date getDate() {
+        return date;
     }
 
-    public void setMail(String mail) {
-        this.mail = mail;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     @Override

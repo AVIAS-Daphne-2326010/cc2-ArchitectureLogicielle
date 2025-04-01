@@ -4,26 +4,14 @@ import java.io.Closeable;
 import java.sql.*;
 import java.util.ArrayList;
 
-/**
- * Classe permettant d'accèder aux livres stockés dans une base de données Mariadb
- */
-public class UserRepositoryMariadb implements UserRepositoryInterface, Closeable {
 
-    /**
-     * Accès à la base de données (session)
-     */
+public class UserRepositoryPostgres implements UserRepositoryInterface, Closeable {
+
     protected Connection dbConnection ;
 
-    /**
-     * Constructeur de la classe
-     * @param infoConnection chaîne de caractères avec les informations de connexion
-     *                       (p.ex. jdbc:mariadb://mysql-[compte].alwaysdata.net/[compte]_library_db
-     * @param user chaîne de caractères contenant l'identifiant de connexion à la base de données
-     * @param pwd chaîne de caractères contenant le mot de passe à utiliser
-     */
-    public UserRepositoryMariadb(String infoConnection, String user, String pwd ) throws java.sql.SQLException, java.lang.ClassNotFoundException {
-        Class.forName("org.mariadb.jdbc.Driver");
-        dbConnection = DriverManager.getConnection( infoConnection, user, pwd ) ;
+    public UserRepositoryPostgres(String infoConnection, String user, String password ) throws java.sql.SQLException, java.lang.ClassNotFoundException {
+        Class.forName("org.postgresql.Driver");
+        dbConnection = DriverManager.getConnection( infoConnection, user, password ) ;
     }
 
     @Override
@@ -37,24 +25,26 @@ public class UserRepositoryMariadb implements UserRepositoryInterface, Closeable
     }
 
     @Override
-    public User getUser(int id) {
+    public User getUser(String login) {
 
         User selectedUser = null;
 
-        String query = "SELECT * FROM User WHERE id=?";
+        String query = "SELECT * FROM User WHERE login=?";
 
         try ( PreparedStatement ps = dbConnection.prepareStatement(query) ){
-            ps.setInt(1, id); // utiliser setInt ici
+            ps.setString(1, login);
 
             ResultSet result = ps.executeQuery();
 
             if( result.next() )
             {
-                String mail = result.getString("mail");
-                String name = result.getString("name");
-                String pwd = result.getString("pwd");
+                String login = result.getInt("login");
+                String first_name = result.getString("first_name");
+                String last_name = result.getString("last_name");
+                Date date = result.getDate("date");
+                String password = result.getString("password");
 
-                selectedUser = new User(id, mail, name, pwd);
+                selectedUser = new User(login, first_name, last_name, date, password);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -73,12 +63,14 @@ public class UserRepositoryMariadb implements UserRepositoryInterface, Closeable
 
             while ( result.next() )
             {
-                int id = result.getInt("id");
-                String mail = result.getString("mail");
-                String name = result.getString("name");
-                String pwd = result.getString("pwd");
+                String login = result.getInt("login");
+                String first_name = result.getString("first_name");
+                String last_name = result.getString("last_name");
+                Date date = result.getDate("date");
+                String password = result.getString("password");
 
-                User currentUser = new User(id, mail, name, pwd);
+
+                User currentUser = new User(login, first_name, last_name, date, password);
                 listUsers.add(currentUser);
             }
         } catch (SQLException e) {
@@ -88,15 +80,16 @@ public class UserRepositoryMariadb implements UserRepositoryInterface, Closeable
     }
 
     @Override
-    public boolean updateUser(int id, String mail, String name, String pwd) {
-        String query = "UPDATE User SET mail=?, name=?, pwd=? WHERE id=?";
+    public boolean updateUser(String login, String first_name, String last_name, Date date, String password) {
+        String query = "UPDATE User SET first_name=?, last_name=?, password=?, date=?, WHERE login=?";
         int nbRowModified = 0;
 
         try ( PreparedStatement ps = dbConnection.prepareStatement(query) ){
-            ps.setString(1, mail);
-            ps.setString(2, name);
-            ps.setString(3, pwd);
-            ps.setInt(4, id);
+            ps.setString(1, first_name);
+            ps.setString(2, last_name);
+            ps.setString(3, password);
+            ps.setInt(5, login);
+            ps.setDate(6, date);
 
             nbRowModified = ps.executeUpdate();
         } catch (SQLException e) {
