@@ -9,7 +9,7 @@ public class CompoPanierRepositoryMariadb implements CompoPanierRepositoryInterf
     private Connection dbConnection;
 
     public CompoPanierRepositoryMariadb(String infoConnection, String user, String pwd) throws SQLException, ClassNotFoundException {
-        Class.forName("org.mariadb.jdbc.Driver");
+        Class.forName("org.postgresql.Driver");
         dbConnection = DriverManager.getConnection(infoConnection, user, pwd);
     }
 

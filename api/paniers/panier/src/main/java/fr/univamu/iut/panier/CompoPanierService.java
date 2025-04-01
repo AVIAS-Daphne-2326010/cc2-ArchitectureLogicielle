@@ -1,5 +1,7 @@
 package fr.univamu.iut.panier;
 
+import jakarta.inject.Inject;
+
 import java.util.List;
 
 public class CompoPanierService {

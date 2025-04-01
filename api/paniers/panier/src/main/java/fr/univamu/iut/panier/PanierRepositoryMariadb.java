@@ -20,7 +20,7 @@ public class PanierRepositoryMariadb implements PanierRepositoryInterface {
      * @throws ClassNotFoundException
      */
     public PanierRepositoryMariadb(String infoConnection, String user, String pwd) throws SQLException, ClassNotFoundException {
-        Class.forName("org.mariadb.jdbc.Driver");
+        Class.forName("org.postgresql.Driver");
         dbConnection = DriverManager.getConnection(infoConnection, user, pwd);
     }
 
@@ -48,6 +48,7 @@ public class PanierRepositoryMariadb implements PanierRepositoryInterface {
     public Panier findById(int id) {
         Panier panier = null;
         String query = "SELECT * FROM Panier WHERE id_type_panier = ?";
+
         try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
@@ -64,6 +65,7 @@ public class PanierRepositoryMariadb implements PanierRepositoryInterface {
     public List<Panier> findAll() {
         List<Panier> paniers = new ArrayList<>();
         String query = "SELECT * FROM Panier";
+
         try (Statement stmt = dbConnection.createStatement()) {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {

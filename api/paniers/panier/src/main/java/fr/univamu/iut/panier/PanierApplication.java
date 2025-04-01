@@ -18,10 +18,9 @@ public class PanierApplication extends Application {
     private PanierRepositoryInterface openDbConnection() {
         PanierRepositoryMariadb db = null;
         try {
-            db = new PanierRepositoryMariadb("jdbc:mariadb://mysql-pub_admin_coop.alwaysdata.net/pub_cooperative", "pub_admin_coop", "admin_coop");
+            db = new PanierRepositoryMariadb("jdbc:postgresql://postgresql-pub.alwaysdata.net/pub_cooperative", "pub_admin_coop", "admin_coop");
         } catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
+            throw new RuntimeException("Database connection failed", e);        }
         return db;
     }
 

@@ -18,6 +18,7 @@ public class PanierService {
     public String getAllPaniersJSON() {
         List<Panier> paniers = panierRepo.findAll();
         String result = null;
+
         try (Jsonb jsonb = JsonbBuilder.create()) {
             result = jsonb.toJson(paniers);
         } catch (Exception e) {
@@ -29,6 +30,7 @@ public class PanierService {
     public String getPanierJSON(int id) {
         Panier panier = panierRepo.findById(id);
         String result = null;
+
         if (panier != null) {
             try (Jsonb jsonb = JsonbBuilder.create()) {
                 result = jsonb.toJson(panier);

@@ -11,6 +11,7 @@ import jakarta.ws.rs.core.Response;
 public class PanierResource {
 
     private PanierService service;
+
     private CompoPanierService compoService;
 
     @Inject
