@@ -1,18 +1,38 @@
 package fr.univamu.iut.apicommandes;
 
-import java.io.Closeable;
 import java.sql.*;
 import java.util.ArrayList;
 
+/**
+ * Implémentation concrète du repository pour la gestion des commandes utilisant PostgreSQL.
+ * Cette classe fournit les opérations CRUD pour les commandes et leur composition en paniers.
+ *
+ * <p>Elle implémente {@link CommandeRepositoryInterface} et gère la connexion à la base de données PostgreSQL.</p>
+ *
+ * @see CommandeRepositoryInterface
+ */
 public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
     private Connection dbConnection;
 
+    /**
+     * Constructeur établissant la connexion à la base de données PostgreSQL.
+     *
+     * @param url URL de connexion à la base de données
+     * @param user Nom d'utilisateur pour l'authentification
+     * @param password Mot de passe pour l'authentification
+     * @throws SQLException Si une erreur survient lors de la connexion
+     * @throws ClassNotFoundException Si le driver PostgreSQL n'est pas trouvé
+     */
     public CommandeRepositoryPostgres(String url, String user, String password)
             throws SQLException, ClassNotFoundException {
         Class.forName("org.postgresql.Driver");
         this.dbConnection = DriverManager.getConnection(url, user, password);
     }
 
+    /**
+     * {@inheritDoc}
+     * Ferme proprement la connexion à la base de données.
+     */
     @Override
     public void close() {
         try {
@@ -24,6 +44,14 @@ public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * Récupère une commande complète avec ses paniers associés.
+     *
+     * @param id_commande Identifiant de la commande à récupérer
+     * @return La commande trouvée ou null si elle n'existe pas
+     * @throws RuntimeException Si une erreur SQL survient
+     */
     @Override
     public Commande getCommande(int id_commande) {
         Commande selectedCommande = null;
@@ -51,6 +79,13 @@ public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
         return selectedCommande;
     }
 
+    /**
+     * {@inheritDoc}
+     * Récupère toutes les commandes avec leurs paniers associés.
+     *
+     * @return Liste de toutes les commandes
+     * @throws RuntimeException Si une erreur SQL survient
+     */
     @Override
     public ArrayList<Commande> getAllCommandes(){
         ArrayList<Commande> listCommandes;
@@ -81,6 +116,14 @@ public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
         return listCommandes;
     }
 
+    /**
+     * {@inheritDoc}
+     * Crée une nouvelle commande dans la base de données.
+     *
+     * @param commande La commande à créer
+     * @return true si la création a réussi, false sinon
+     * @throws RuntimeException Si une erreur SQL survient
+     */
     @Override
     public boolean createCommande(Commande commande) {
         String query = "INSERT INTO Commande (login, relai, date) VALUES (?, ?, ?)";
@@ -96,6 +139,14 @@ public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * Supprime une commande de la base de données.
+     *
+     * @param id Identifiant de la commande à supprimer
+     * @return true si la suppression a réussi, false sinon
+     * @throws RuntimeException Si une erreur SQL survient
+     */
     @Override
     public boolean deleteCommande(int id) {
         // Option 1 : Suppression en cascade (si les FK le permettent)
@@ -109,6 +160,17 @@ public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * Met à jour les informations d'une commande existante.
+     *
+     * @param id_commande Identifiant de la commande à mettre à jour
+     * @param login Nouveau nom d'utilisateur
+     * @param relai Nouveau point relais
+     * @param date Nouvelle date
+     * @return true si la mise à jour a réussi, false sinon
+     * @throws RuntimeException Si une erreur SQL survient
+     */
     @Override
     public boolean updateCommande (int id_commande, String login, String relai, Date date) {
         String query = "UPDATE Commande SET login = ?, relai = ?, date = ? WHERE id_commande = ?";
@@ -127,6 +189,14 @@ public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
         return (nbRowModified != 0);
     }
 
+    /**
+     * {@inheritDoc}
+     * Récupère la composition en paniers d'une commande.
+     *
+     * @param id_commande Identifiant de la commande
+     * @return Liste des paniers associés à la commande
+     * @throws RuntimeException Si une erreur SQL survient
+     */
     @Override
     public ArrayList<CompoCommande> getCompoCommandes(int id_commande) {
         ArrayList<CompoCommande> listCompoCommandes = new ArrayList<>();
@@ -148,6 +218,16 @@ public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
         return listCompoCommandes;
     }
 
+    /**
+     * {@inheritDoc}
+     * Ajoute un panier à une commande existante.
+     *
+     * @param id_commande Identifiant de la commande
+     * @param id_type_panier Identifiant du type de panier
+     * @param quantite Quantité à ajouter
+     * @return true si l'ajout a réussi, false sinon
+     * @throws RuntimeException Si une erreur SQL survient
+     */
     @Override
     public boolean addCompoCommande(int id_commande, int id_type_panier, int quantite) {
         String query = "INSERT INTO CompoCommande (id_commande, id_type_panier, quantite) VALUES (?, ?, ?)";
@@ -165,6 +245,16 @@ public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
         return (nbRowInserted != 0);
     }
 
+    /**
+     * {@inheritDoc}
+     * Modifie la quantité d'un panier dans une commande.
+     *
+     * @param id_commande Identifiant de la commande
+     * @param id_type_panier Identifiant du type de panier
+     * @param quantite Nouvelle quantité
+     * @return true si la modification a réussi, false sinon
+     * @throws RuntimeException Si une erreur SQL survient
+     */
     @Override
     public boolean updateCompoCommande(int id_commande, int id_type_panier, int quantite) {
         String query = "UPDATE CompoCommande SET quantite = ? WHERE id_commande = ? AND id_type_panier = ?";
@@ -182,6 +272,15 @@ public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
         return (nbRowModified != 0);
     }
 
+    /**
+     * {@inheritDoc}
+     * Supprime un panier d'une commande.
+     *
+     * @param id_commande Identifiant de la commande
+     * @param id_type_panier Identifiant du type de panier
+     * @return true si la suppression a réussi, false sinon
+     * @throws RuntimeException Si une erreur SQL survient
+     */
     @Override
     public boolean removeCompoCommande(int id_commande, int id_type_panier) {
         String query = "DELETE FROM CompoCommande WHERE id_commande = ? AND id_type_panier = ?";
