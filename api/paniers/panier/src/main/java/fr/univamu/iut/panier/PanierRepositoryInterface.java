@@ -24,13 +24,13 @@ public interface PanierRepositoryInterface {
      * @param id identifiant du panier recherché
      * @return le panier recherché
      */
-    public Panier findById(int id);
+    public Panier getPanier(int id);
 
     /**
      * Méthode retournant la liste de tous les paniers
      * @return la liste des paniers
      */
-    public List<Panier> findAll();
+    public List<Panier> getAllPaniers();
 
     /**
      * Méthode permettant de mettre à jour un panier

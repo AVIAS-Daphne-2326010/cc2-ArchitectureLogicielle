@@ -1,5 +1,7 @@
 package fr.univamu.iut.panier;
 
+import java.util.ArrayList;
+
 /**
  * Classe représentant un panier
  */
@@ -9,8 +11,11 @@ public class Panier {
     protected double prix;
     protected int n_panier_dispo;
     protected String mise_a_jour;
+    protected ArrayList<CompoPanier> produits;
 
-    public Panier() {}
+    public Panier() {
+        this.produits = new ArrayList<>();
+    }
 
     /**
      * Constructeur de panier
@@ -19,13 +24,26 @@ public class Panier {
      * @param n_panier_dispo nombre de paniers disponibles
      * @param mise_a_jour date de mise à jour du panier
      */
-    public Panier(int id_type_panier, double prix, int n_panier_dispo, String mise_a_jour) {
+    public Panier(int id_type_panier, double prix, int n_panier_dispo, String mise_a_jour, ArrayList<CompoPanier> produits) {
         this.id_type_panier = id_type_panier;
         this.prix = prix;
         this.n_panier_dispo = n_panier_dispo;
         this.mise_a_jour = mise_a_jour;
+        this.produits = produits;
     }
 
+
+    public ArrayList<CompoPanier> getProduits() {
+        return produits;
+    }
+
+    public void setProduits(ArrayList<CompoPanier> produits) {
+        this.produits = produits;
+    }
+
+    public void addProduit(CompoPanier produit) {
+        this.produits.add(produit);
+    }
 
     public int getId_type_panier() {
         return id_type_panier;
@@ -58,6 +76,8 @@ public class Panier {
     public void setMise_a_jour(String mise_a_jour) {
         this.mise_a_jour = mise_a_jour;
     }
+
+    
 
     @Override
     public String toString() {

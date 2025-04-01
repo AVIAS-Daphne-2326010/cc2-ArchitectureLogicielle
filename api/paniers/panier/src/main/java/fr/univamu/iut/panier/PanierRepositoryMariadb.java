@@ -45,7 +45,7 @@ public class PanierRepositoryMariadb implements PanierRepositoryInterface {
     }
 
     @Override
-    public Panier findById(int id) {
+    public Panier getPanier(int id) {
         Panier panier = null;
         String query = "SELECT * FROM Panier WHERE id_type_panier = ?";
 
@@ -53,7 +53,7 @@ public class PanierRepositoryMariadb implements PanierRepositoryInterface {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                panier = new Panier(rs.getInt("id_type_panier"), rs.getDouble("prix"), rs.getInt("n_panier_dispo"), rs.getString("mise_a_jour"));
+                panier = new Panier(rs.getInt("id_type_panier"), rs.getDouble("prix"), rs.getInt("n_panier_dispo"), rs.getString("mise_a_jour"), new ArrayList<>());
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -62,14 +62,27 @@ public class PanierRepositoryMariadb implements PanierRepositoryInterface {
     }
 
     @Override
-    public List<Panier> findAll() {
+    public List<Panier> getAllPaniers() {
         List<Panier> paniers = new ArrayList<>();
         String query = "SELECT * FROM Panier";
+        String queryCompo = "SELECT * FROM CompoPanier WHERE id_type_panier = ?";
 
         try (Statement stmt = dbConnection.createStatement()) {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
-                Panier panier = new Panier(rs.getInt("id_type_panier"), rs.getDouble("prix"), rs.getInt("n_panier_dispo"), rs.getString("mise_a_jour"));
+                Panier panier = new Panier(rs.getInt("id_type_panier"), rs.getDouble("prix"), rs.getInt("n_panier_dispo"), rs.getString("mise_a_jour"), new ArrayList<>());
+
+                try (PreparedStatement stmtCompo = dbConnection.prepareStatement(queryCompo)) {
+                    stmtCompo.setInt(1, rs.getInt("id_type_panier"));
+                    try (ResultSet rsCompo = stmtCompo.executeQuery()) {
+                        while (rsCompo.next()) {
+                            int idProduit = rsCompo.getInt("id_produit");
+                            int quantite = rsCompo.getInt("quantite");
+                            panier.getProduits().add(new CompoPanier(rs.getInt("id_type_panier"), idProduit, quantite));
+                        }
+                    }
+                }
+
                 paniers.add(panier);
             }
         } catch (SQLException e) {
