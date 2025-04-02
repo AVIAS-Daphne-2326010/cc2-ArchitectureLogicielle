@@ -12,7 +12,7 @@ public class Commande {
     protected int id;
     protected String user_name;
     protected String relai;
-    protected Date date;
+    protected String date;
     protected ArrayList<CompoCommande> paniers;
 
     /**
@@ -29,7 +29,7 @@ public class Commande {
      * @param relai Point relais pour la livraison
      * @param date Date de récupération de la commande
      */
-    public Commande(int id, String user_name, String relai, Date date) {
+    public Commande(int id, String user_name, String relai, String date) {
         this.id = id;
         this.user_name = user_name;
         this.relai = relai;
@@ -89,7 +89,7 @@ public class Commande {
      * Retourne la date de récupération de la commande.
      * @return Date de récupération de la commande
      */
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
@@ -121,7 +121,7 @@ public class Commande {
      * Définit la date de récupération de la commande.
      * @param date Nouvelle date
      */
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

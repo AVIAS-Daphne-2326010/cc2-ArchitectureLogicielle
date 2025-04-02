@@ -32,7 +32,7 @@ public class User {
     /**
      * La date de naissance de l'utilisateur.
      */
-    private Date date;
+    private String date;
 
     /**
      * Constructeur de la classe {@code User} pour initialiser un utilisateur avec les informations fournies.
@@ -43,7 +43,7 @@ public class User {
      * @param date La date de naissance de l'utilisateur.
      * @param password Le mot de passe de l'utilisateur.
      */
-    public User(String login, String firstName, String lastName, java.sql.Date date, String password) {
+    public User(String login, String firstName, String lastName, String date, String password) {
         this.login = login;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -128,7 +128,7 @@ public class User {
      *
      * @return La date de naissance de l'utilisateur.
      */
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
@@ -137,7 +137,7 @@ public class User {
      *
      * @param date La nouvelle date de naissance de l'utilisateur.
      */
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

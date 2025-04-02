@@ -42,7 +42,7 @@ public interface UserRepositoryInterface {
      * @param password Le nouveau mot de passe de l'utilisateur.
      * @return {@code true} si la mise à jour a été effectuée avec succès, {@code false} sinon.
      */
-    public boolean updateUser(String login, String first_name, String last_name, Date date, String password);
+    public boolean updateUser(String login, String first_name, String last_name, String date, String password);
 
     /**
      * Ajoute un nouvel utilisateur au système de stockage.

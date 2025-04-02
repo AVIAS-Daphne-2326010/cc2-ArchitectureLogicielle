@@ -8,7 +8,7 @@ import java.util.List;
  * Implémentation de l'interface CompoPanierRepositoryInterface pour la gestion des compositions de paniers
  * en utilisant une base de données MariaDB.
  */
-public class CompoPanierRepositoryMariadb implements CompoPanierRepositoryInterface {
+public class CompoPanierRepositoryPostegres implements CompoPanierRepositoryInterface {
 
     private Connection dbConnection;
 
@@ -21,7 +21,7 @@ public class CompoPanierRepositoryMariadb implements CompoPanierRepositoryInterf
      * @throws SQLException si un problème survient lors de la connexion
      * @throws ClassNotFoundException si le driver de la base de données n'est pas trouvé
      */
-    public CompoPanierRepositoryMariadb(String infoConnection, String user, String pwd) throws SQLException, ClassNotFoundException {
+    public CompoPanierRepositoryPostegres(String infoConnection, String user, String pwd) throws SQLException, ClassNotFoundException {
         Class.forName("org.postgresql.Driver");
         dbConnection = DriverManager.getConnection(infoConnection, user, pwd);
     }

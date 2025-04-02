@@ -16,9 +16,9 @@ public class PanierApplication extends Application {
      */
     @Produces
     private PanierRepositoryInterface openDbConnection() {
-        PanierRepositoryMariadb db = null;
+        PanierRepositoryPostgres db = null;
         try {
-            db = new PanierRepositoryMariadb("jdbc:postgresql://postgresql-pub.alwaysdata.net/pub_cooperative", "pub_admin_coop", "admin_coop");
+            db = new PanierRepositoryPostgres("jdbc:postgresql://postgresql-pub.alwaysdata.net/pub_cooperative", "pub_admin_coop", "admin_coop");
         } catch (Exception e) {
             throw new RuntimeException("Database connection failed", e);        }
         return db;
@@ -38,9 +38,9 @@ public class PanierApplication extends Application {
      */
     @Produces
     private CompoPanierRepositoryInterface openCompoDbConnection() {
-        CompoPanierRepositoryMariadb compoDb = null;
+        CompoPanierRepositoryPostegres compoDb = null;
         try {
-            compoDb = new CompoPanierRepositoryMariadb("jdbc:mariadb://mysql-pub_admin_coop.alwaysdata.net/pub_cooperative", "pub_admin_coop", "admin_coop");
+            compoDb = new CompoPanierRepositoryPostegres("jdbc:mariadb://mysql-pub_admin_coop.alwaysdata.net/pub_cooperative", "pub_admin_coop", "admin_coop");
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }

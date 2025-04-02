@@ -22,8 +22,6 @@ public class CompoPanier {
      * @param idTypePanier l'identifiant du type de panier
      * @param idProduit l'identifiant du produit
      * @param quantite la quantité du produit dans le panier
-     * @param nomProduit le nom du produit
-     * @param unite l'unité de mesure du produit
      */
     public CompoPanier(int idTypePanier, int idProduit, int quantite) {
         this.idTypePanier = idTypePanier;

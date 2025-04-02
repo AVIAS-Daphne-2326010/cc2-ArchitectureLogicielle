@@ -2,6 +2,13 @@ package fr.univamu.iut.apicommandes;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.URI;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Implémentation concrète du repository pour la gestion des commandes utilisant PostgreSQL.
@@ -56,24 +63,71 @@ public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
     public Commande getCommande(int id_commande) {
         Commande selectedCommande = null;
         String query = "SELECT * FROM Commande WHERE id_commande = ?";
+        String queryCompo = "SELECT * FROM CompoCommande WHERE id_commande = ?";
+
+        HttpClient httpClient = HttpClient.newHttpClient();
+        ObjectMapper objectMapper = new ObjectMapper();
 
         try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
             ps.setInt(1, id_commande);
+            ResultSet rs = ps.executeQuery();
 
-            ResultSet result = ps.executeQuery();
+            if (rs.next()) {
+                selectedCommande = new Commande(
+                        id_commande,
+                        rs.getString("login"),
+                        rs.getString("relai"),
+                        rs.getString("date")
+                );
 
-            if(result.next()) {
-                String login = result.getString("login");
-                String relai = result.getString("relai");
-                Date date = result.getDate("date");
+                try (PreparedStatement stmtCompo = dbConnection.prepareStatement(queryCompo)) {
+                    stmtCompo.setInt(1, id_commande);
+                    try (ResultSet rsCompo = stmtCompo.executeQuery()) {
+                        ArrayList<CompoCommande> compoCommandes = new ArrayList<>();
+                        while (rsCompo.next()) {
+                            int idTypePanier = rsCompo.getInt("id_type_panier");
+                            int quantite = rsCompo.getInt("quantite");
 
-                selectedCommande = new Commande(id_commande, login, relai, date);
+                            String apiUrl = "http://localhost:8080/panier-1.0-SNAPSHOT/api/panier/" + idTypePanier;
+                            HttpRequest request = HttpRequest.newBuilder()
+                                    .uri(URI.create(apiUrl))
+                                    .GET()
+                                    .build();
 
-                ArrayList<CompoCommande> paniers = getCompoCommandes(id_commande);
-                selectedCommande.setPaniers(paniers);
+                            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                            if (response.statusCode() == 200) {
+                                JsonNode panierJson = objectMapper.readTree(response.body());
+
+                                CompoCommande compo = new CompoCommande();
+                                compo.setId_commande(id_commande);
+                                compo.setId_type_panier(idTypePanier);
+                                compo.setQuantite(quantite);
+                                compo.setMiseAjour(panierJson.get("mise_a_jour").asText());
+                                compo.setNombrePaniersDispo(panierJson.get("n_panier_dispo").asInt());
+                                compo.setPrix(panierJson.get("prix").floatValue());
+
+                                List<Produit> produits = new ArrayList<>();
+                                JsonNode produitsArray = panierJson.get("produits");
+                                for (JsonNode produitJson : produitsArray) {
+                                    Produit produit = new Produit();
+                                    produit.setIdProduit(produitJson.get("idProduit").asInt());
+                                    produit.setNomProduit(produitJson.get("nomProduit").asText());
+                                    produit.setQuantite(produitJson.get("quantite").asInt());
+                                    produit.setUnite(produitJson.get("unite").asText());
+                                    produits.add(produit);
+                                }
+                                compo.setProduits(produits);
+
+                                compoCommandes.add(compo);
+                            } else {
+                                throw new RuntimeException("Erreur lors du fetch du panier avec id " + idTypePanier);
+                            }
+                        }
+                        selectedCommande.setPaniers(compoCommandes);
+                    }
+                }
             }
-
-        } catch (SQLException e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return selectedCommande;
@@ -87,30 +141,74 @@ public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
      * @throws RuntimeException Si une erreur SQL survient
      */
     @Override
-    public ArrayList<Commande> getAllCommandes(){
-        ArrayList<Commande> listCommandes;
-
+    public ArrayList<Commande> getAllCommandes() {
+        ArrayList<Commande> listCommandes = new ArrayList<>();
         String query = "SELECT * FROM Commande";
+        String queryCompo = "SELECT * FROM CompoCommande WHERE id_commande = ?";
 
-        try (PreparedStatement ps = dbConnection.prepareStatement(query)){
-            ResultSet result = ps.executeQuery();
-            listCommandes = new ArrayList<>();
+        HttpClient httpClient = HttpClient.newHttpClient();
+        ObjectMapper objectMapper = new ObjectMapper();
 
-            while (result.next()) {
-                int id = result.getInt("id_commande");
-                String login = result.getString("login");
-                String relai = result.getString("relai");
-                Date date = result.getDate("date");
+        try (Statement stmt = dbConnection.createStatement()) {
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                int idCommande = rs.getInt("id_commande");
+                Commande commande = new Commande(
+                        idCommande,
+                        rs.getString("login"),
+                        rs.getString("relai"),
+                        rs.getString("date")
+                );
 
-                Commande currentCommande = new Commande(id, login, relai, date);
+                try (PreparedStatement stmtCompo = dbConnection.prepareStatement(queryCompo)) {
+                    stmtCompo.setInt(1, idCommande);
+                    try (ResultSet rsCompo = stmtCompo.executeQuery()) {
+                        ArrayList<CompoCommande> compoCommandes = new ArrayList<>();
+                        while (rsCompo.next()) {
+                            int idTypePanier = rsCompo.getInt("id_type_panier");
+                            int quantite = rsCompo.getInt("quantite");
 
-                ArrayList<CompoCommande> paniers = getCompoCommandes(id);
-                currentCommande.setPaniers(paniers);
+                            String apiUrl = "http://localhost:8080/panier-1.0-SNAPSHOT/api/panier/" + idTypePanier;
+                            HttpRequest request = HttpRequest.newBuilder()
+                                    .uri(URI.create(apiUrl))
+                                    .GET()
+                                    .build();
 
-                listCommandes.add(currentCommande);
+                            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                            if (response.statusCode() == 200) {
+                                JsonNode panierJson = objectMapper.readTree(response.body());
+
+                                CompoCommande compo = new CompoCommande();
+                                compo.setId_commande(idCommande);
+                                compo.setId_type_panier(idTypePanier);
+                                compo.setQuantite(quantite);
+                                compo.setMiseAjour(panierJson.get("mise_a_jour").asText());
+                                compo.setNombrePaniersDispo(panierJson.get("n_panier_dispo").asInt());
+                                compo.setPrix(panierJson.get("prix").floatValue());
+
+                                List<Produit> produits = new ArrayList<>();
+                                JsonNode produitsArray = panierJson.get("produits");
+                                for (JsonNode produitJson : produitsArray) {
+                                    Produit produit = new Produit();
+                                    produit.setIdProduit(produitJson.get("idProduit").asInt());
+                                    produit.setNomProduit(produitJson.get("nomProduit").asText());
+                                    produit.setQuantite(produitJson.get("quantite").asInt());
+                                    produit.setUnite(produitJson.get("unite").asText());
+                                    produits.add(produit);
+                                }
+                                compo.setProduits(produits);
+
+                                compoCommandes.add(compo);
+                            } else {
+                                throw new RuntimeException("Erreur lors du fetch du panier avec id " + idTypePanier);
+                            }
+                        }
+                        commande.setPaniers(compoCommandes);
+                    }
+                }
+                listCommandes.add(commande);
             }
-
-        } catch (SQLException e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return listCommandes;
@@ -130,7 +228,7 @@ public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
         try (PreparedStatement ps = dbConnection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, commande.getUser_name());
             ps.setString(2, commande.getRelai());
-            ps.setDate(3, new java.sql.Date(commande.getDate().getTime()));
+            ps.setString(3, commande.getDate());
 
             int nbRowInserted = ps.executeUpdate();
             return nbRowInserted > 0;
@@ -172,14 +270,14 @@ public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
      * @throws RuntimeException Si une erreur SQL survient
      */
     @Override
-    public boolean updateCommande (int id_commande, String login, String relai, Date date) {
+    public boolean updateCommande (int id_commande, String login, String relai, String date) {
         String query = "UPDATE Commande SET login = ?, relai = ?, date = ? WHERE id_commande = ?";
         int nbRowModified = 0;
 
         try (PreparedStatement ps = dbConnection.prepareStatement(query)){
             ps.setString (1, login);
             ps.setString (2, relai);
-            ps.setDate (3, date);
+            ps.setString (3, date);
             ps.setInt (4, id_commande);
 
             nbRowModified = ps.executeUpdate();

@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Classe permettant d'accéder aux paniers stockés dans une base de données MariaDB
  */
-public class PanierRepositoryMariadb implements PanierRepositoryInterface {
+public class PanierRepositoryPostgres implements PanierRepositoryInterface {
 
     private Connection dbConnection;
 
@@ -25,7 +25,7 @@ public class PanierRepositoryMariadb implements PanierRepositoryInterface {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    public PanierRepositoryMariadb(String infoConnection, String user, String pwd) throws SQLException, ClassNotFoundException {
+    public PanierRepositoryPostgres(String infoConnection, String user, String pwd) throws SQLException, ClassNotFoundException {
         Class.forName("org.postgresql.Driver");
         dbConnection = DriverManager.getConnection(infoConnection, user, pwd);
     }
@@ -54,18 +54,59 @@ public class PanierRepositoryMariadb implements PanierRepositoryInterface {
     public Panier getPanier(int id) {
         Panier panier = null;
         String query = "SELECT * FROM Panier WHERE id_type_panier = ?";
+        String queryCompo = "SELECT * FROM CompoPanier WHERE id_type_panier = ?";
+
+        HttpClient httpClient = HttpClient.newHttpClient();
+        ObjectMapper objectMapper = new ObjectMapper();
 
         try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                panier = new Panier(rs.getInt("id_type_panier"), rs.getDouble("prix"), rs.getInt("n_panier_dispo"), rs.getString("mise_a_jour"), new ArrayList<>());
+                panier = new Panier(id, rs.getDouble("prix"), rs.getInt("n_panier_dispo"), rs.getString("mise_a_jour"), new ArrayList<>());
+
+                try (PreparedStatement stmtCompo = dbConnection.prepareStatement(queryCompo)) {
+                    stmtCompo.setInt(1, id);
+                    try (ResultSet rsCompo = stmtCompo.executeQuery()) {
+                        while (rsCompo.next()) {
+                            int idProduit = rsCompo.getInt("id_produit");
+                            int quantite = rsCompo.getInt("quantite");
+
+                            String apiUrl = "http://localhost:8080/PU-1.0-SNAPSHOT/api/produits/" + idProduit;
+                            HttpRequest request = HttpRequest.newBuilder()
+                                    .uri(URI.create(apiUrl))
+                                    .GET()
+                                    .build();
+
+                            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                            if (response.statusCode() == 200) {
+                                JsonNode productJson = objectMapper.readTree(response.body());
+
+                                String nomProduit = productJson.get("nomProduit").asText();
+                                String unite = productJson.get("unite").asText();
+
+                                CompoPanier produit = new CompoPanier();
+                                produit.setIdProduit(idProduit);
+                                produit.setNomProduit(nomProduit);
+                                produit.setUnite(unite);
+                                produit.setQuantite(quantite);
+                                produit.setIdTypePanier(id);
+
+                                panier.getProduits().add(produit);
+                            } else {
+                                throw new RuntimeException("Erreur lors du fetch du produit avec id " + idProduit);
+                            }
+                        }
+                    }
+                }
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
         return panier;
     }
+
 
     @Override
     public List<Panier> getAllPaniers() {

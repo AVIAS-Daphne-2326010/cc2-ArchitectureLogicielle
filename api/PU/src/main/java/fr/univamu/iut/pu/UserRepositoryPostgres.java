@@ -62,7 +62,7 @@ public class UserRepositoryPostgres implements UserRepositoryInterface, Closeabl
                 String password = result.getString("password");
                 String firstName = result.getString("first_name");
                 String lastName = result.getString("last_name");
-                Date date = result.getDate("date");
+                String date = result.getString("date");
 
                 selectedUser = new User(login, firstName, lastName, date, password);
             }
@@ -91,7 +91,7 @@ public class UserRepositoryPostgres implements UserRepositoryInterface, Closeabl
                 String password = result.getString("password");
                 String firstName = result.getString("first_name");
                 String lastName = result.getString("last_name");
-                Date date = result.getDate("date");
+                String date = result.getString("date");
 
                 User currentUser = new User(login, firstName, lastName, date, password);
                 listUsers.add(currentUser);
@@ -114,14 +114,14 @@ public class UserRepositoryPostgres implements UserRepositoryInterface, Closeabl
      * @return {@code true} si l'utilisateur a été mis à jour avec succès, {@code false} sinon.
      */
     @Override
-    public boolean updateUser(String login, String firstName, String lastName, Date date, String password) {
+    public boolean updateUser(String login, String firstName, String lastName, String date, String password) {
         String query = "UPDATE users SET first_name=?, last_name=?, date=?, password=? WHERE login=?";
         int nbRowModified = 0;
 
         try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
             ps.setString(1, firstName);
             ps.setString(2, lastName);
-            ps.setDate(3, date);
+            ps.setString(3, date);
             ps.setString(4, password);
             ps.setString(5, login);
 
@@ -148,7 +148,7 @@ public class UserRepositoryPostgres implements UserRepositoryInterface, Closeabl
             ps.setString(1, user.getLogin());
             ps.setString(2, user.getFirstName());
             ps.setString(3, user.getLastName());
-            ps.setDate(4, new java.sql.Date(user.getDate().getTime()));
+            ps.setString(4, user.getDate());
             ps.setString(5, user.getPassword());
 
             nbRowInserted = ps.executeUpdate();
