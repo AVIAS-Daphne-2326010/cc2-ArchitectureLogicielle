@@ -3,5 +3,5 @@
 namespace service;
 interface CommandesAccessInterface
 {
-    public function getAllCommandes();
+    public function getAllCommandes($userName);
 }

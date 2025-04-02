@@ -3,20 +3,27 @@
 namespace service;
 class CommandesChecking
 {
-    protected $annoncesTxt;
+    protected $commandesTxt;
 
     public function getCommandesTxt()
     {
-        return $this->annoncesTxt;
+        return $this->commandesTxt;
     }
 
-      public function getAllCommandes($data)
-     {
-        $annonces = $data->getAllCommandes();
+    public function getAllCommandes($api, $userName)
+    {
+        $commandes = $api->getAllCommandes($userName);
 
-        $this->annoncesTxt = array();
-        foreach ($annonces as $post) {
-            $this->annoncesTxt[] = ['id' => $post->getId(), 'title' => $post->getTitle(), 'body' => $post->getBody(), 'date' => $post->getDate()];
+        $this->commandesTxt = array();
+
+        foreach ($commandes as $commande) {
+            $this->commandesTxt[] = [
+                'id' => $commande->getId(),
+                'relai' => $commande->getRelai(),
+                'userName' => $commande->getUserName(),
+                'date' => $commande->getDate(),
+                'paniers' => $commande->getPaniers()
+            ];
         }
     }
 }

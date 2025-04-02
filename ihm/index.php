@@ -9,6 +9,7 @@ include_once 'control/Controllers.php';
 include_once 'control/Presenter.php';
 
 include_once 'service/CommandesChecking.php';
+include_once 'service/CommandesCreate.php';
 include_once 'service/PaniersChecking.php';
 include_once 'service/UserChecking.php';
 
@@ -26,7 +27,7 @@ use gui\{
     Layout};
 use control\{Controllers, Presenter};
 use data\{ApiCommandes, ApiPaniers, ApiUtilisateursProduits};
-use service\{CommandesChecking, PaniersChecking, UserChecking};
+use service\{CommandesChecking, CommandesCreate, PaniersChecking, UserChecking};
 
 // ajout des apis
 $apiPanier = new ApiPaniers();
@@ -37,7 +38,10 @@ $apiUserProduct = new ApiUtilisateursProduits();
 $controller = new Controllers();
 
 // intialisation du cas d'utilisation service\CommandesChecking
-$annoncesCheck = new CommandesChecking() ;
+$commandesCheck = new CommandesChecking() ;
+
+// intialisation du cas d'utilisation service\CommandesCreate
+$commandesCreate = new CommandesCreate();
 
 // intialisation du cas d'utilisation service\PaniersChecking
 $paniersCheck = new PaniersChecking();
@@ -46,7 +50,7 @@ $paniersCheck = new PaniersChecking();
 $userCheck = new UserChecking() ;
 
 // intialisation du presenter avec accès aux données de AnnoncesCheking
-$presenter = new Presenter($annoncesCheck, $paniersCheck);
+$presenter = new Presenter($commandesCheck, $paniersCheck);
 
 // chemin de l'URL demandée au navigateur
 // (p.ex. /index.php)
@@ -91,10 +95,15 @@ elseif ('/index.php/paniers' == $uri) {
     $vuePaniers->display();
 }
 elseif ('/index.php/commandes' == $uri) {
-
-    $controller->commandesAction($apiCommande, $annoncesCheck);
+    if (!isset($_POST['produitsId'])) {
+        $controller->commandesAction($apiCommande, $commandesCheck, $_SESSION['login'], $commandesCreate);
+    }
+    else {
+        $controller->commandesAction($apiCommande, $commandesCheck, $_SESSION['login'], $commandesCreate, $_POST['produitsId']);
+    }
 
     $layout = new Layout("gui/layoutLogged.html" );
+
     $vueCommandes = new ViewCommandes( $layout,  $_SESSION['login'], $presenter);
 
     $vueCommandes->display();

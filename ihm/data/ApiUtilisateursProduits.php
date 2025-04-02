@@ -3,7 +3,9 @@
 namespace data;
 
 use domain\User;
+use domain\Produit;
 include_once "domain/User.php";
+include_once "domain/Produit.php";
 
 use service\ProduitsAccessInterface;
 use service\UserAccessInterface;
@@ -16,18 +18,27 @@ class ApiUtilisateursProduits implements UserAccessInterface, ProduitsAccessInte
     {
         $user = null;
 
-        return new User( 'test', 'test', 'test', 'test', '10-10-2005' );
+        $apiUrl = "http://localhost:8080/PU-1.0-SNAPSHOT/api/users";
+        $jsonData = file_get_contents($apiUrl);
 
-        if ( $row = $result->fetch() )
-            $user = new User( $row['login'] , $row['password'], $row['name'], $row['firstName'], $row['date'] );
+        if ($jsonData === false) {
+            return null;
+        }
 
-        $result->closeCursor();
+        $users = json_decode($jsonData, true);
 
-        return $user;
-    }
+        foreach ($users as $userData) {
+            if ($userData['login'] === $login && $userData['password'] === $password) {
+                return new User(
+                    $userData['login'],
+                    $userData['password'],
+                    $userData['lastName'],
+                    $userData['firstName'],
+                    $userData['date']
+                );
+            }
+        }
 
-    public function getProduit($id)
-    {
-        // TODO: Implement getProduit() method.
+        return null;
     }
 }

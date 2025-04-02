@@ -34,12 +34,18 @@ class Controllers
         }
     }
 
-    public function paniersAction( $data, $paniersCheck)
+    public function paniersAction($api, $paniersCheck)
     {
-        $paniersCheck->getAllPaniers($data);
+         $paniersCheck->getAllPaniers($api);
     }
-    public function commandesAction( $data, $annoncesCheck)
+
+    public function commandesAction($api, $commandesCheck, $userName, $commadesCreate, $produitsId = null)
     {
-        $annoncesCheck->getAllCommandes($data);
+        if ( $produitsId != null ) {
+            $commandesCheck->getAllCommandes($api, $userName);
+        }
+        else {
+            $commandesCheck->createCommande($userName, $produitsId, $api);
+        }
     }
 }

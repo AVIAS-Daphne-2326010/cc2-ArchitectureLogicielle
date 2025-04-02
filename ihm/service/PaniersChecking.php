@@ -12,11 +12,18 @@ class PaniersChecking
 
     public function getAllPaniers($api)
     {
-        $annonces = $api->getAllPaniers();
+        $paniers = $api->getAllPaniers();
 
         $this->paniersTxt = array();
-        foreach ($annonces as $post) {
-            $this->paniersTxt[] = ['id' => $post->getId(), 'title' => $post->getTitle(), 'body' => $post->getBody(), 'date' => $post->getDate()];
+        foreach ($paniers as $panier) {
+            $this->paniersTxt[] = [
+                'id' => $panier->getIdTypePanier(),
+                'mise_a_jour' => $panier->getMiseAJour(),
+                'n_panier_dispo' => $panier->getNPanierDispo(),
+                'prix' => $panier->getPrix(),
+                'produits' => $panier->getProduits()
+            ];
         }
     }
+
 }
