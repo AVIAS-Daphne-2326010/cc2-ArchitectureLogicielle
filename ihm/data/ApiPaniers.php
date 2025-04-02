@@ -1,5 +1,4 @@
 <?php
-
 namespace data;
 
 use domain\Panier;
@@ -9,8 +8,17 @@ use domain\Produit;
 use service\PaniersAccessInterface;
 include_once "service/PaniersAccessInterface.php";
 
+/**
+ * Classe ApiPaniers permettant d'accéder aux paniers via une API.
+ * Implémente l'interface PaniersAccessInterface.
+ */
 class ApiPaniers implements PaniersAccessInterface
 {
+    /**
+     * Récupère tous les paniers via l'API.
+     *
+     * @return Panier[]|null Un tableau d'objets Panier, ou null en cas d'échec.
+     */
     public function getAllPaniers()
     {
         $apiUrl = "http://localhost:8080/panier-1.0-SNAPSHOT/api/panier";

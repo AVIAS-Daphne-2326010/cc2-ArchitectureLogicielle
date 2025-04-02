@@ -1,17 +1,34 @@
 <?php
 namespace control;
+
 class Presenter
 {
+    /**
+     * @var object $annoncesCheck L'objet responsable de la gestion des commandes et annonces.
+     * @var object $paniersCheck L'objet responsable de la gestion des paniers.
+     */
     protected $annoncesCheck;
     protected $paniersCheck;
 
+    /**
+     * Constructeur de la classe Presenter.
+     *
+     * @param object $annoncesCheck L'objet responsable de la gestion des commandes et annonces.
+     * @param object $paniersCheck L'objet responsable de la gestion des paniers.
+     */
     public function __construct($annoncesCheck, $paniersCheck)
     {
         $this->annoncesCheck = $annoncesCheck;
         $this->paniersCheck = $paniersCheck;
     }
 
-    public function getAllCommandesHTML() {
+    /**
+     * Génère le HTML pour afficher la liste des commandes.
+     *
+     * @return string Le code HTML pour afficher les commandes, ou un message d'erreur si aucune commande n'est trouvée.
+     */
+    public function getAllCommandesHTML()
+    {
         $content = null;
         if ($this->annoncesCheck->getCommandesTxt() != null) {
             $content = '<h2>Liste des commandes</h2>';
@@ -54,8 +71,13 @@ class Presenter
         return $content;
     }
 
-
-    public function getAllPaniersHTML() {
+    /**
+     * Génère le HTML pour afficher la liste des paniers.
+     *
+     * @return string Le code HTML pour afficher les paniers, ou un message d'erreur si aucun panier n'est trouvé.
+     */
+    public function getAllPaniersHTML()
+    {
         $paniers = $this->paniersCheck->getPaniersTxt();
         if ($paniers === null) {
             return '<p>Aucun panier trouvé.</p>';
