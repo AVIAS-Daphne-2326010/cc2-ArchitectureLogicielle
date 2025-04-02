@@ -297,4 +297,28 @@ public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
         return (nbRowDeleted != 0);
     }
 
+    @Override
+    public ArrayList<Commande> getCommandesByUser(String user_name) {
+        ArrayList<Commande> userCommandes = new ArrayList<>();
+        String query = "SELECT * FROM Commande WHERE login = ?";
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setString(1, user_name);
+            ResultSet result = ps.executeQuery();
+
+            while (result.next()) {
+                int id = result.getInt("id_commande");
+                String relai = result.getString("relai");
+                Date date = result.getDate("date");
+
+                Commande commande = new Commande(id, user_name, relai, date);
+                commande.setPaniers(getCompoCommandes(id));
+                userCommandes.add(commande);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return userCommandes;
+    }
+
 }

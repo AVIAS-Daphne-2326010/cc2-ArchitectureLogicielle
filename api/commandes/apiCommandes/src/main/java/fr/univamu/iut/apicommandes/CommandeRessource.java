@@ -57,16 +57,26 @@ public class CommandeRessource {
     }
 
     /**
-     * Crée une nouvelle commande.
+     * Crée une nouvelle commande pour un utilisateur spécifique.
+     * @param user_name Le nom d'utilisateur
      * @param commande La commande à créer (au format JSON)
      * @return Réponse HTTP
      *
      * @HTTP 201 Créé avec succès
+     * @HTTP 400 Si le user_name ne correspond pas à celui dans la commande
      * @HTTP 406 Si la création échoue
      */
     @POST
+    @Path("user/{user_name}")
     @Consumes("application/json")
-    public Response createCommande(Commande commande) {
+    public Response createCommandeForUser(
+            @PathParam("user_name") String user_name,
+            Commande commande) {
+
+        if (!user_name.equals(commande.getUser_name())) {
+            throw new BadRequestException("User name in path doesn't match command data");
+        }
+
         if (!service.createCommande(commande)) {
             throw new NotAcceptableException();
         }
@@ -190,5 +200,22 @@ public class CommandeRessource {
             throw new NotFoundException();
         }
         return Response.ok("deleted").build();
+    }
+
+    /**
+     * Récupère toutes les commandes d'un utilisateur spécifique par son nom d'utilisateur.
+     * @param user_name Le nom d'utilisateur
+     * @return String JSON contenant la liste des commandes de l'utilisateur
+     *
+     * @HTTP 200 Succès
+     * @HTTP 404 Si l'utilisateur n'a pas de commandes
+     */
+    @GET
+    @Path("user/{user_name}")
+    @Produces("application/json")
+    public String getCommandesByUser(@PathParam("user_name") String user_name) {
+        String result = service.getCommandesByUserJSON(user_name);
+        if (result == null) throw new NotFoundException();
+        return result;
     }
 }
