@@ -88,4 +88,12 @@ public interface CommandeRepositoryInterface {
      * @return true si la suppression a réussi, false sinon
      */
     boolean removeCompoCommande(int id_commande, int id_type_panier);
+
+    /**
+     * Récupère toutes les commandes d'un utilisateur spécifique.
+     * @param user_name Le nom d'utilisateur
+     * @return Liste des commandes de l'utilisateur
+     */
+    ArrayList<Commande> getCommandesByUser(String user_name);
+
 }

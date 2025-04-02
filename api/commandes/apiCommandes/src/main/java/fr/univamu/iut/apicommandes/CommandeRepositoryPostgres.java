@@ -1,5 +1,9 @@
 package fr.univamu.iut.apicommandes;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
     private Connection dbConnection;
+    private static final String PANIER_API_URL = "http://localhost:8080/panier-1.0-SNAPSHOT/api/panier/";
 
     /**
      * Constructeur établissant la connexion à la base de données PostgreSQL.
@@ -392,6 +397,57 @@ public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
             throw new RuntimeException(e);
         }
         return (nbRowDeleted != 0);
+    }
+
+    @Override
+    public ArrayList<Commande> getCommandesByUser(String user_name) {
+        ArrayList<Commande> userCommandes = new ArrayList<>();
+        String query = "SELECT * FROM Commande WHERE login = ?";
+
+        try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
+            ps.setString(1, user_name);
+            ResultSet result = ps.executeQuery();
+
+            while (result.next()) {
+                int id = result.getInt("id_commande");
+                String relai = result.getString("relai");
+                String date = result.getString("date");
+
+                Commande commande = new Commande(id, user_name, relai, date);
+                commande.setPaniers(getCompoCommandes(id));
+                userCommandes.add(commande);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return userCommandes;
+    }
+
+    /**
+     * Méthode utilitaire pour récupérer les détails d'un panier depuis l'API
+     * @param idTypePanier l'identifiant du type de panier
+     * @return les détails du panier sous forme de String JSON
+     * @throws Exception si l'appel à l'API échoue
+     */
+    private String getPanierDetailsFromApi(int idTypePanier) throws Exception {
+        URL url = new URL(PANIER_API_URL + idTypePanier);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+
+        int responseCode = conn.getResponseCode();
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String inputLine;
+            StringBuilder response = new StringBuilder();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+            return response.toString();
+        } else {
+            throw new Exception("Erreur API Panier - Code: " + responseCode);
+        }
     }
 
 }
