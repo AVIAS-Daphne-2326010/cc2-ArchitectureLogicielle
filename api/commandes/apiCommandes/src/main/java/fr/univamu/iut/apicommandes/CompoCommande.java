@@ -7,6 +7,7 @@ public class CompoCommande {
     protected int id_commande;
     protected int id_type_panier;
     protected int quantite;
+    private String panierDetails;
 
     /**
      * Constructeur par défaut.
@@ -72,6 +73,22 @@ public class CompoCommande {
      */
     public void setQuantite(int quantite) {
         this.quantite = quantite;
+    }
+
+    /**
+     * Retourne les détails du panier.
+     * @return Les détails du panier sous forme de chaîne
+     */
+    public String getPanierDetails() {
+        return panierDetails;
+    }
+
+    /**
+     * Définit les détails du panier.
+     * @param panierDetails Les détails du panier sous forme de chaîne
+     */
+    public void setPanierDetails(String panierDetails) {
+        this.panierDetails = panierDetails;
     }
 
     /**

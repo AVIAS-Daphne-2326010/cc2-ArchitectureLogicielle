@@ -2,7 +2,10 @@ package fr.univamu.iut.apicommandes;
 
 import java.sql.*;
 import java.util.ArrayList;
-
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 /**
  * Implémentation concrète du repository pour la gestion des commandes utilisant PostgreSQL.
  * Cette classe fournit les opérations CRUD pour les commandes et leur composition en paniers.
@@ -13,6 +16,7 @@ import java.util.ArrayList;
  */
 public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
     private Connection dbConnection;
+    private static final String PANIER_API_URL = "http://localhost:8080/panier-1.0-SNAPSHOT/api/panier/";
 
     /**
      * Constructeur établissant la connexion à la base de données PostgreSQL.
@@ -210,14 +214,19 @@ public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
                 int id_type_panier = result.getInt("id_type_panier");
                 int quantite = result.getInt("quantite");
 
-                listCompoCommandes.add(new CompoCommande(id_commande, id_type_panier, quantite));
+                // Appel à l'API panier pour obtenir les détails
+                String panierDetails = getPanierDetailsFromApi(id_type_panier);
+
+                CompoCommande compo = new CompoCommande(id_commande, id_type_panier, quantite);
+                compo.setPanierDetails(panierDetails); // Vous devrez ajouter ce setter dans CompoCommande
+
+                listCompoCommandes.add(compo);
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur lors de la récupération des paniers: " + e.getMessage(), e);
         }
         return listCompoCommandes;
     }
-
     /**
      * {@inheritDoc}
      * Ajoute un panier à une commande existante.
@@ -319,6 +328,33 @@ public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
             throw new RuntimeException(e);
         }
         return userCommandes;
+    }
+
+    /**
+     * Méthode utilitaire pour récupérer les détails d'un panier depuis l'API
+     * @param idTypePanier l'identifiant du type de panier
+     * @return les détails du panier sous forme de String JSON
+     * @throws Exception si l'appel à l'API échoue
+     */
+    private String getPanierDetailsFromApi(int idTypePanier) throws Exception {
+        URL url = new URL(PANIER_API_URL + idTypePanier);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+
+        int responseCode = conn.getResponseCode();
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String inputLine;
+            StringBuilder response = new StringBuilder();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+            return response.toString();
+        } else {
+            throw new Exception("Erreur API Panier - Code: " + responseCode);
+        }
     }
 
 }
