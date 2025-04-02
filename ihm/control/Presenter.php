@@ -16,23 +16,35 @@ class Presenter
         if ($this->annoncesCheck->getCommandesTxt() != null) {
             $content = '<h2>Liste des commandes</h2>';
             $content .= '<div class="commandes-list">';
+            $prix = 0;
+
             foreach ($this->annoncesCheck->getCommandesTxt() as $commande) {
                 $content .= '<div class="commande">';
                 $content .= '<h3>Commande #' . $commande['id'] . '</h3>';
                 $content .= '<p><strong>Relai:</strong> ' . $commande['relai'] . '</p>';
-                $content .= '<p><strong>Client:</strong> ' . $commande['userName'] . '</p>';
                 $content .= '<p><strong>Date:</strong> ' . $commande['date'] . '</p>';
 
                 if (!empty($commande['paniers'])) {
                     $content .= '<p><strong>Paniers:</strong></p>';
                     $content .= '<ul>';
-                    print_r($commande);
+
                     foreach ($commande['paniers'] as $panier) {
-                        $content .= '<li>Panier#' . $panier . '</li>';
+                        $content .= '<li>Panier # ' . $panier['id_type_panier'];
+                        $prix += $panier['prix'];
+
+                        if (!empty($panier['produits'])) {
+                            $content .= '<ul>';
+                            foreach ($panier['produits'] as $produit) {
+                                $content .= '<li>' . $produit['quantite'] . ' ' . $produit['unite'] . ' of ' . $produit['nomProduit'] . '</li>';
+                            }
+                            $content .= '</ul>';
+                        }
+                        $content .= '</li>';
                     }
+
                     $content .= '</ul>';
                 }
-
+                $content .= '<p><strong>Prix :</strong>' . $prix . '€' . '</p>';
                 $content .= '</div>';
             }
             $content .= '</div>';
@@ -41,6 +53,7 @@ class Presenter
         }
         return $content;
     }
+
 
     public function getAllPaniersHTML() {
         $paniers = $this->paniersCheck->getPaniersTxt();

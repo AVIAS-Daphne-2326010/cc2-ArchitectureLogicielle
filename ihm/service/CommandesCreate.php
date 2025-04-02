@@ -4,7 +4,7 @@ namespace service;
 
 class CommandesCreate
 {
-    public function createCommande($userName, $produitsId, $api) {
+    public function createCommande($api, $userName, $produitsId) {
         return ($api->createCommande($userName, $produitsId) != false);
     }
 }

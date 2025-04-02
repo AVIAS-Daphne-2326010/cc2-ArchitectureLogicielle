@@ -3,5 +3,5 @@
 namespace service;
 interface CommandesCreateInterface
 {
-    public function createCommandes($userName, $produitsId);
+    public function createCommande($userName, $produitsId);
 }

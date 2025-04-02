@@ -39,13 +39,13 @@ class Controllers
          $paniersCheck->getAllPaniers($api);
     }
 
-    public function commandesAction($api, $commandesCheck, $userName, $commadesCreate, $produitsId = null)
+    public function commandesAction($api, $commandesCheck, $userName, $commandesCreate, $produitsId = null)
     {
         if ( $produitsId === null ) {
             $commandesCheck->getAllCommandes($api, $userName);
         }
         else {
-            $commandesCheck->createCommande($userName, $produitsId, $api);
+            $commandesCreate->createCommande($api, $userName, $produitsId);
         }
     }
 }

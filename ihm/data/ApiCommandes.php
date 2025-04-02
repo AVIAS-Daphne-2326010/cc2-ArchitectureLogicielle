@@ -43,19 +43,30 @@ class ApiCommandes implements CommandesAccessInterface, CommandesCreateInterface
         return $commandes;
     }
 
-    public function createCommandes($userName, $produitsId) {
+    public function createCommande($userName, $produitsId) {
         $url = "http://localhost:8080/apiCommandes-1.0-SNAPSHOT/api/commandes/user/{$userName}";
-        $data = ['produitsId' => $produitsId];
+
+        $data = [
+            'user_name' => $userName,
+            'produits_id' => $produitsId
+        ];
+
+        $jsonData = json_encode($data);
 
         $options = [
             'http' => [
-                'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+                'header'  => "Content-type: application/json\r\n",
                 'method'  => 'POST',
-                'content' => http_build_query($data)
+                'content' => $jsonData
             ]
         ];
+
         $context = stream_context_create($options);
-        file_get_contents($url, false, $context);
+
+        // TODO quand le côté api sera implémenté
+        //file_get_contents($url, false, $context);
+        echo '<p>Fonctionnalité pas implémentée</p>';
+        exit();
 
         return true;
     }
