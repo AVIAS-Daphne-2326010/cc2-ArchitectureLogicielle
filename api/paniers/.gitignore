@@ -6,9 +6,7 @@ target/
 .idea
 .mvn
 
-mvnw
-mvnw.cmd
-pom.xml
+
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
