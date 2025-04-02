@@ -1,13 +1,18 @@
 package fr.univamu.iut.apicommandes;
 
+import java.util.List;
+
 /**
  * Représente un composant d'une commande, associant une commande à un type de panier et une quantité.
  */
 public class CompoCommande {
     protected int id_commande;
-    protected int id_type_panier;
     protected int quantite;
-    private String panierDetails;
+    protected int id_type_panier;
+    protected String miseAjour;
+    protected int nombrePaniersDispo;
+    protected float prix;
+    protected List<Produit> produits;
 
     /**
      * Constructeur par défaut.
@@ -76,19 +81,67 @@ public class CompoCommande {
     }
 
     /**
-     * Retourne les détails du panier.
-     * @return Les détails du panier sous forme de chaîne
+     * Obtient la date de mise à jour.
+     * @return La date de mise à jour.
      */
-    public String getPanierDetails() {
-        return panierDetails;
+    public String getMiseAjour() {
+        return miseAjour;
     }
 
     /**
-     * Définit les détails du panier.
-     * @param panierDetails Les détails du panier sous forme de chaîne
+     * Définit la date de mise à jour.
+     * @param miseAjour La date de mise à jour.
      */
-    public void setPanierDetails(String panierDetails) {
-        this.panierDetails = panierDetails;
+    public void setMiseAjour(String miseAjour) {
+        this.miseAjour = miseAjour;
+    }
+
+    /**
+     * Obtient le nombre de paniers disponibles.
+     * @return Le nombre de paniers disponibles.
+     */
+    public int getNombrePaniersDispo() {
+        return nombrePaniersDispo;
+    }
+
+    /**
+     * Définit le nombre de paniers disponibles.
+     * @param nombrePaniersDispo Le nombre de paniers disponibles.
+     */
+    public void setNombrePaniersDispo(int nombrePaniersDispo) {
+        this.nombrePaniersDispo = nombrePaniersDispo;
+    }
+
+    /**
+     * Obtient le prix du panier.
+     * @return Le prix du panier.
+     */
+    public float getPrix() {
+        return prix;
+    }
+
+    /**
+     * Définit le prix du panier.
+     * @param prix Le prix du panier.
+     */
+    public void setPrix(float prix) {
+        this.prix = prix;
+    }
+
+    /**
+     * Obtient la liste des produits dans le panier.
+     * @return La liste des produits.
+     */
+    public List<Produit> getProduits() {
+        return produits;
+    }
+
+    /**
+     * Définit la liste des produits dans le panier.
+     * @param produits La liste des produits.
+     */
+    public void setProduits(List<Produit> produits) {
+        this.produits = produits;
     }
 
     /**
@@ -99,8 +152,12 @@ public class CompoCommande {
     public String toString() {
         return "CompoCommande{" +
                 "id_commande=" + id_commande +
-                ", id_type_panier=" + id_type_panier +
                 ", quantite=" + quantite +
+                ", id_type_panier=" + id_type_panier +
+                ", miseAjour='" + miseAjour + '\'' +
+                ", nombrePaniersDispo=" + nombrePaniersDispo +
+                ", prix=" + prix +
+                ", produits=" + produits +
                 '}';
     }
 }

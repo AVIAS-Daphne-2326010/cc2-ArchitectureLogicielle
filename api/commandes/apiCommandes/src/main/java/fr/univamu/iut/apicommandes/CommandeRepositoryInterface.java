@@ -40,7 +40,7 @@ public interface CommandeRepositoryInterface {
      * @param date Nouvelle date
      * @return true si la mise à jour a réussi, false sinon
      */
-    boolean updateCommande(int id, String user_name, String relai, Date date);
+    boolean updateCommande(int id, String user_name, String relai, String date);
 
     /**
      * Crée une nouvelle commande dans le système.
