@@ -3,6 +3,12 @@ package fr.univamu.iut.panier;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.URI;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Classe permettant d'accéder aux paniers stockés dans une base de données MariaDB
@@ -67,6 +73,9 @@ public class PanierRepositoryMariadb implements PanierRepositoryInterface {
         String query = "SELECT * FROM Panier";
         String queryCompo = "SELECT * FROM CompoPanier WHERE id_type_panier = ?";
 
+        HttpClient httpClient = HttpClient.newHttpClient();
+        ObjectMapper objectMapper = new ObjectMapper();
+
         try (Statement stmt = dbConnection.createStatement()) {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
@@ -78,14 +87,37 @@ public class PanierRepositoryMariadb implements PanierRepositoryInterface {
                         while (rsCompo.next()) {
                             int idProduit = rsCompo.getInt("id_produit");
                             int quantite = rsCompo.getInt("quantite");
-                            panier.getProduits().add(new CompoPanier(rs.getInt("id_type_panier"), idProduit, quantite));
+
+                            String apiUrl = "http://localhost:8080/PU-1.0-SNAPSHOT/api/produits/" + idProduit;
+                            HttpRequest request = HttpRequest.newBuilder()
+                                    .uri(URI.create(apiUrl))
+                                    .GET()
+                                    .build();
+
+                            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+                            if (response.statusCode() == 200) {
+                                JsonNode productJson = objectMapper.readTree(response.body());
+
+                                String nomProduit = productJson.get("nomProduit").asText();
+                                int stockQuantite = productJson.get("quantite").asInt();
+                                String unite = productJson.get("unite").asText();
+
+                                CompoPanier produit = new CompoPanier();
+                                produit.setIdProduit(idProduit);
+                                produit.setNomProduit(nomProduit);
+                                produit.setUnite(unite);
+                                produit.setQuantite(quantite);
+
+                                panier.getProduits().add(produit);
+                            } else {
+                                throw new RuntimeException("Erreur lors du fetch du produit avec id " + idProduit);
+                            }
                         }
                     }
                 }
-
                 paniers.add(panier);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return paniers;

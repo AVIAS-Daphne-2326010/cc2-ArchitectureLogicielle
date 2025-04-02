@@ -8,6 +8,8 @@ public class CompoPanier {
     private int idTypePanier;
     private int idProduit;
     private int quantite;
+    private String nomProduit;
+    private String unite;
 
     /**
      * Constructeur par défaut.
@@ -20,6 +22,8 @@ public class CompoPanier {
      * @param idTypePanier l'identifiant du type de panier
      * @param idProduit l'identifiant du produit
      * @param quantite la quantité du produit dans le panier
+     * @param nomProduit le nom du produit
+     * @param unite l'unité de mesure du produit
      */
     public CompoPanier(int idTypePanier, int idProduit, int quantite) {
         this.idTypePanier = idTypePanier;
@@ -27,57 +31,43 @@ public class CompoPanier {
         this.quantite = quantite;
     }
 
-    /**
-     * Obtient l'identifiant du type de panier.
-     *
-     * @return l'identifiant du type de panier
-     */
     public int getIdTypePanier() {
         return idTypePanier;
     }
 
-    /**
-     * Définit l'identifiant du type de panier.
-     *
-     * @param idTypePanier le nouvel identifiant du type de panier
-     */
     public void setIdTypePanier(int idTypePanier) {
         this.idTypePanier = idTypePanier;
     }
 
-    /**
-     * Obtient l'identifiant du produit.
-     *
-     * @return l'identifiant du produit
-     */
     public int getIdProduit() {
         return idProduit;
     }
 
-    /**
-     * Définit l'identifiant du produit.
-     *
-     * @param idProduit le nouvel identifiant du produit
-     */
     public void setIdProduit(int idProduit) {
         this.idProduit = idProduit;
     }
 
-    /**
-     * Obtient la quantité du produit dans le panier.
-     *
-     * @return la quantité du produit
-     */
     public int getQuantite() {
         return quantite;
     }
 
-    /**
-     * Définit la quantité du produit dans le panier.
-     *
-     * @param quantite la nouvelle quantité du produit
-     */
     public void setQuantite(int quantite) {
         this.quantite = quantite;
+    }
+
+    public String getNomProduit() {
+        return nomProduit;
+    }
+
+    public void setNomProduit(String nomProduit) {
+        this.nomProduit = nomProduit;
+    }
+
+    public String getUnite() {
+        return unite;
+    }
+
+    public void setUnite(String unite) {
+        this.unite = unite;
     }
 }
