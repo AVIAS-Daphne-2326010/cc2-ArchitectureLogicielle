@@ -95,11 +95,11 @@ elseif ('/index.php/paniers' == $uri) {
     $vuePaniers->display();
 }
 elseif ('/index.php/commandes' == $uri) {
-    if (!isset($_POST['produitsId'])) {
-        $controller->commandesAction($apiCommande, $commandesCheck, $_SESSION['login'], $commandesCreate);
+    if (isset($_POST['paniersId'])) {
+        $controller->commandesAction($apiCommande, $commandesCheck, $_SESSION['login'], $commandesCreate, $_POST['paniersId']);
     }
     else {
-        $controller->commandesAction($apiCommande, $commandesCheck, $_SESSION['login'], $commandesCreate, $_POST['produitsId']);
+        $controller->commandesAction($apiCommande, $commandesCheck, $_SESSION['login'], $commandesCreate);
     }
 
     $layout = new Layout("gui/layoutLogged.html" );

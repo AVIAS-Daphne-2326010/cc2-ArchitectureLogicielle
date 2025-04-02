@@ -122,7 +122,7 @@ public class CompoCommande {
 
     /**
      * Définit le prix du panier.
-     * @param float Le prix du panier.
+     * @param prix Le prix du panier.
      */
     public void setPrix(float prix) {
         this.prix = prix;

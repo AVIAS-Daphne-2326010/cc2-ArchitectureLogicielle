@@ -41,7 +41,7 @@ class Controllers
 
     public function commandesAction($api, $commandesCheck, $userName, $commadesCreate, $produitsId = null)
     {
-        if ( $produitsId != null ) {
+        if ( $produitsId === null ) {
             $commandesCheck->getAllCommandes($api, $userName);
         }
         else {

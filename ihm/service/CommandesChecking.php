@@ -14,6 +14,10 @@ class CommandesChecking
     {
         $commandes = $api->getAllCommandes($userName);
 
+        if (empty($commandes)) {
+            return [];
+        }
+
         $this->commandesTxt = array();
 
         foreach ($commandes as $commande) {

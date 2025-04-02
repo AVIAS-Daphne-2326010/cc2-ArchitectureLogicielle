@@ -43,34 +43,41 @@ class Presenter
     }
 
     public function getAllPaniersHTML() {
-        $content = null;
-        if ($this->paniersCheck->getPaniersTxt() != null) {
-            $content = '<h2>Liste des paniers</h2>';
-            $content .= '<ul>';
-            foreach ($this->paniersCheck->getPaniersTxt() as $panier) {
-                $content .= '<li>';
-                $content .= '<h3>Panier ' . $panier['id'] . '</h3>';
-                $content .= '<p>Mise à jour: ' . $panier['mise_a_jour'] . '</p>';
-                $content .= '<p>Quantité disponible: ' . $panier['n_panier_dispo'] . '</p>';
-                $content .= '<p>Prix: ' . $panier['prix'] . ' €</p>';
-                $content .= '<p>Produits:</p><ul>';
+        $paniers = $this->paniersCheck->getPaniersTxt();
+        if ($paniers === null) {
+            return '<p>Aucun panier trouvé.</p>';
+        }
 
-                if (is_array($panier['produits'])) {
-                    foreach ($panier['produits'] as $produit) {
-                        $content .= '<li>' . $produit->getNomProduit() . ' (' . $produit->getQuantite() . ' ' . $produit->getUnite() . ')</li>';
-                    }
-                } else {
-                    $produit = $panier['produits'];
-                    $content .= '<li>' . $produit->getNomProduit() . ' (' . $produit->getQuantite() . ' ' . $produit->getUnite() . ')</li>';
-                }
+        $content = '<h2>Liste des paniers</h2>';
+        $content .= '<form method="POST" action="http://localhost:8081/index.php/commandes">';
+        $content .= '<ul>';
 
-                $content .= '</ul>';
-                $content .= '</li>';
+        foreach ($paniers as $panier) {
+            $content .= '<li>';
+            $content .= '<h3>Panier ' . htmlspecialchars($panier['id']) . '</h3>';
+            $content .= '<p>Mise à jour: ' . htmlspecialchars($panier['mise_a_jour']) . '</p>';
+            $content .= '<p>Quantité disponible: ' . htmlspecialchars($panier['n_panier_dispo']) . '</p>';
+            $content .= '<p>Prix: ' . htmlspecialchars($panier['prix']) . ' €</p>';
+            $content .= '<p>Produits:</p><ul>';
+
+            foreach ($panier['produits'] as $produit) {
+                $content .= '<li>' . htmlspecialchars($produit->getNomProduit()) . ' (' . htmlspecialchars($produit->getQuantite()) . ' ' . htmlspecialchars($produit->getUnite()) . ')</li>';
             }
+
             $content .= '</ul>';
+
+            $content .= '<label>';
+            $content .= '<input type="checkbox" name="paniersId[]" value="' . htmlspecialchars($panier['id']) . '">';
+            $content .= ' Sélectionner ce panier';
+            $content .= '</label>';
+
+            $content .= '</li>';
         }
-        else {
-            return '<p>Aucune panier trouvé.</p>';
-        }
+
+        $content .= '</ul>';
+        $content .= '<button type="submit">Commander</button>';
+        $content .= '</form>';
+
+        return $content;
     }
 }

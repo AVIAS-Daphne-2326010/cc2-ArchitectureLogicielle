@@ -9,7 +9,7 @@ use service\CommandesAccessInterface;
 include_once "service/CommandesAccessInterface.php";
 
 use service\CommandesCreateInterface;
-include_once "domain/CommandesCreateInterface.php";
+include_once "service/CommandesCreateInterface.php";
 
 class ApiCommandes implements CommandesAccessInterface, CommandesCreateInterface
 {

@@ -7,12 +7,10 @@ use domain\Produit;
 include_once "domain/User.php";
 include_once "domain/Produit.php";
 
-use service\ProduitsAccessInterface;
 use service\UserAccessInterface;
-include_once "service/ProduitsAccessInterface.php";
 include_once "service/UserAccessInterface.php";
 
-class ApiUtilisateursProduits implements UserAccessInterface, ProduitsAccessInterface
+class ApiUtilisateursProduits implements UserAccessInterface
 {
     public function getUser($login, $password)
     {

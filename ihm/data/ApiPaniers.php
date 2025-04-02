@@ -26,7 +26,12 @@ class ApiPaniers implements PaniersAccessInterface
         foreach ($paniersData as $panierData) {
             $produits = [];
             foreach ($panierData['produits'] as $produitData) {
-                $produit = new Produit($produitData['idProduit'], $produitData['nomProduit'], $produitData['quantite'], $produitData['unite']);
+                $produit = new Produit(
+                    $produitData['idProduit'],
+                    $produitData['nomProduit'],
+                    $produitData['quantite'],
+                    $produitData['unite']
+                );
                 if ($produit) {
                     $produits[] = $produit;
                 }

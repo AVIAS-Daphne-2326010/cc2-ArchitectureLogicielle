@@ -247,7 +247,6 @@ public class CommandeRepositoryPostgres implements CommandeRepositoryInterface {
      */
     @Override
     public boolean deleteCommande(int id) {
-        // Option 1 : Suppression en cascade (si les FK le permettent)
         String query = "DELETE FROM Commande WHERE id_commande = ?";
         try (PreparedStatement ps = dbConnection.prepareStatement(query)) {
             ps.setInt(1, id);
