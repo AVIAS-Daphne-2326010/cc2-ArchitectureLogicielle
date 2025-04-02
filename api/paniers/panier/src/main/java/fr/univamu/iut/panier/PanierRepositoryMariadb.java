@@ -79,10 +79,11 @@ public class PanierRepositoryMariadb implements PanierRepositoryInterface {
         try (Statement stmt = dbConnection.createStatement()) {
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
-                Panier panier = new Panier(rs.getInt("id_type_panier"), rs.getDouble("prix"), rs.getInt("n_panier_dispo"), rs.getString("mise_a_jour"), new ArrayList<>());
+                int idTypePanier = rs.getInt("id_type_panier");
+                Panier panier = new Panier(idTypePanier, rs.getDouble("prix"), rs.getInt("n_panier_dispo"), rs.getString("mise_a_jour"), new ArrayList<>());
 
                 try (PreparedStatement stmtCompo = dbConnection.prepareStatement(queryCompo)) {
-                    stmtCompo.setInt(1, rs.getInt("id_type_panier"));
+                    stmtCompo.setInt(1, idTypePanier);
                     try (ResultSet rsCompo = stmtCompo.executeQuery()) {
                         while (rsCompo.next()) {
                             int idProduit = rsCompo.getInt("id_produit");
@@ -99,7 +100,6 @@ public class PanierRepositoryMariadb implements PanierRepositoryInterface {
                                 JsonNode productJson = objectMapper.readTree(response.body());
 
                                 String nomProduit = productJson.get("nomProduit").asText();
-                                int stockQuantite = productJson.get("quantite").asInt();
                                 String unite = productJson.get("unite").asText();
 
                                 CompoPanier produit = new CompoPanier();
@@ -107,6 +107,7 @@ public class PanierRepositoryMariadb implements PanierRepositoryInterface {
                                 produit.setNomProduit(nomProduit);
                                 produit.setUnite(unite);
                                 produit.setQuantite(quantite);
+                                produit.setIdTypePanier(idTypePanier);
 
                                 panier.getProduits().add(produit);
                             } else {
