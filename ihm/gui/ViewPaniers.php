@@ -4,13 +4,13 @@ namespace gui;
 
 include_once "View.php";
 
-class ViewAnnoncesEmploi extends View
+class ViewPaniers extends View
 {
     public function __construct($layout, $login, $presenter) {
         parent::__construct($layout, $login);
 
-        $this->title = 'Exemple Annonces Basic PHP: Offres d\'emploi';
+        $this->title = 'Paniers';
 
-        $this->content = $presenter->getAllEmploiHTML();
+        $this->content = $presenter->getAllPaniersHTML();
     }
 }
